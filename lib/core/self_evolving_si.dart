@@ -157,7 +157,7 @@ def exploit(url, payload):
     return sorted.take(count).map((e) => {'name': e.key, 'success_rate': e.value}).toList();
   }
 
-  void _log(String message) {
+  void _log(dynamic message) {
     print('[Si-Evolution][Gen $_generation] $message');
   }
 }

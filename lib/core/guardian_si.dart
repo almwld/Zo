@@ -333,7 +333,7 @@ class GuardianSi extends LoyalSi {
     };
   }
 
-  void _log(String message) {
+  void _log(dynamic message) {
     print('[GuardianSi] $message');
   }
 }

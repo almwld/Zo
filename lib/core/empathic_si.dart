@@ -219,7 +219,7 @@ class EmpathicSi extends OracleSi {
     };
   }
 
-  void _log(String message) {
+  void _log(dynamic message) {
     print('[EmpathicSi] $message');
   }
 }

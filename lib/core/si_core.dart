@@ -199,7 +199,7 @@ class SiCore {
   }
 
   /// تسجيل
-  void _log(String message) {
+  void _log(dynamic message) {
     final entry = '[${DateTime.now().toIso8601String()}] [$mood] $message';
     print(entry);
     _memories.add({'time': DateTime.now(), 'message': message, 'mood': _mood});

@@ -173,7 +173,7 @@ class OracleSi extends GuardianSi {
     return 'LOW';
   }
 
-  void _log(String message) {
+  void _log(dynamic message) {
     print('[OracleSi] $message');
   }
 }
