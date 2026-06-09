@@ -4,33 +4,43 @@ import 'dart:convert';
 import 'package:riverpod/riverpod.dart';
 import 'live_network_monitor.dart';
 import 'connection_info_service.dart';
-import '../demon_si.dart';
+import 'kali_chroot_service.dart';
 
 final unifiedCoreProvider = Provider<UnifiedCoreService>((ref) => UnifiedCoreService());
 
 class UnifiedCoreService {
   final LiveNetworkMonitor _monitor = LiveNetworkMonitor();
   final ConnectionInfoService _connectionInfo = ConnectionInfoService();
-  final DemonSi _si = DemonSi();
-  bool _siAwake = false;
 
   Future<String> execute(String command, {String? target, Map<String, String>? options}) async {
     try {
-      // ============ أوامر Si الشيطان ============
-      if (command == 'awaken' || command == 'start_ai') {
-        if (!_siAwake) { _siAwake = true; await _si.awaken(); return '👿 Si الشيطان استيقظ.'; }
-        return '👿 Si مستيقظ بالفعل.';
-      }
-      if (_siAwake) {
+      // ============ أوامر كالي لينكس ============
+      if (command.startsWith('kali_') || command.startsWith('nmap') || command.startsWith('sqlmap') || command.startsWith('msf') || command.startsWith('hydra') || command.startsWith('aircrack')) {
+        final kaliAvailable = await KaliChrootService.isKaliAvailable();
+        if (!kaliAvailable) return 'Kali Linux chroot not found at ${KaliChrootService._chrootPath}';
+
         switch (command) {
-          case 'berserk': case 'هياج': _si.activateBerserkMode(); return '💀 وضع الهياج مُفعّل.';
-          case 'annihilate': case 'تدمير': return await _si.annihilate(target ?? 'unknown');
-          case 'ddos_hell': case 'جحيم': return await _si.ddosHell(target ?? 'unknown');
-          case 'destroy_network': case 'تدمير_شبكة': return await _si.destroyNetwork(target ?? '192.168.1');
-          case 'apocalypse': case 'نهاية_العالم': return await _si.apocalypse();
-          case 'demon_report': case 'تقرير_الشيطان': return const JsonEncoder.withIndent('  ').convert(_si.getDemonReport());
-          case 'si_status': case 'ai_status': return const JsonEncoder.withIndent('  ').convert(_si.getStatus());
-          case 'si_sleep': case 'stop_ai': _si.sleep(); _siAwake = false; return '😴 Si نام.';
+          case 'kali_check':
+            return 'Kali Linux is available and ready.';
+          case 'kali_nmap':
+            return await KaliChrootService.runNmap(target ?? '127.0.0.1', args: options?['args'] ?? '-sV');
+          case 'kali_sqlmap':
+            return await KaliChrootService.runSqlmap(target ?? 'http://localhost');
+          case 'kali_msf':
+            return await KaliChrootService.runMetasploit(options?['commands'] ?? 'version');
+          case 'kali_hydra':
+            return await KaliChrootService.runHydra(target ?? '127.0.0.1', options?['service'] ?? 'ssh', options?['wordlist'] ?? '/usr/share/wordlists/rockyou.txt', options?['username'] ?? 'root');
+          case 'kali_aircrack':
+            return await KaliChrootService.runAircrack(options?['cap'] ?? '/tmp/capture.cap', options?['wordlist'] ?? '/usr/share/wordlists/rockyou.txt');
+          case 'kali_shell':
+            final result = await KaliChrootService.execute(options?['cmd'] ?? 'uname -a');
+            return result['stdout'] ?? result['stderr'] ?? 'Error';
+          default:
+            // إذا كان الأمر يبدأ بـ "nmap" مباشرة
+            if (command.startsWith('nmap')) {
+              return await KaliChrootService.runNmap(target ?? '127.0.0.1', args: command.substring(4).trim());
+            }
+            return 'Unknown Kali command';
         }
       }
 
@@ -64,7 +74,6 @@ class UnifiedCoreService {
         case 'system_info': return _systemInfo();
       }
 
-      // ============ مساعدة ============
       if (command == 'help') return _helpText();
 
       return 'Unknown: $command. Type help.';
@@ -73,7 +82,6 @@ class UnifiedCoreService {
     }
   }
 
-  // ============ دوال الشبكة ============
   Future<String> _ping(String t) async {
     try { return (await Process.run('ping', ['-c', '4', t], runInShell: true)).stdout.toString(); } catch (e) { return 'Ping failed: $e'; }
   }
@@ -110,34 +118,21 @@ class UnifiedCoreService {
   String _systemInfo() => 'OS: ${Platform.operatingSystem}\nCPU: ${Platform.numberOfProcessors} cores\nDart: ${Platform.version}';
 
   String _helpText() => '''
-=== PROJECT ZION ===
-👿 Si Commands:
-  awaken/start_ai    - Wake Demon Si
-  berserk/هياج       - Berserk Mode
-  annihilate/تدمير   - Annihilate Target
-  ddos_hell/جحيم     - DDoS Hell
-  destroy_network    - Destroy Network
-  apocalypse         - Apocalypse
-  demon_report       - Demon Report
-  si_status/ai_status- Si Status
-  si_sleep/stop_ai   - Sleep Si
+=== PROJECT ZION - KALI EDITION ===
+Kali Commands:
+  kali_check       - Check if Kali is available
+  kali_nmap <ip>   - Run Nmap
+  kali_sqlmap <url>- Run Sqlmap
+  kali_msf         - Run Metasploit
+  kali_hydra       - Run Hydra
+  kali_aircrack    - Run Aircrack-ng
+  kali_shell <cmd> - Execute shell command
 
-📡 Network Monitor:
-  net_start/stop     - Start/Stop Monitor
-  net_connections    - Active Connections
-  net_stats          - Connection Stats
-  net_top            - Top Connections
+Network Monitor:
+  net_start/stop, net_connections, net_stats, net_top
 
-🌐 Network Tools:
-  ping <ip>          - Ping
-  port_scan <ip>     - Port Scan
-  dns_lookup <d>     - DNS Lookup
-  http_headers <url> - HTTP Headers
-  ssl_check <host>   - SSL Check
-  ip_local/public    - IP Addresses
-  network_info       - Network Details
-  ping_test          - Speed Test
-  system_info        - System Info
-====================
+Network Tools:
+  ping, port_scan, dns_lookup, http_headers, ssl_check, system_info
+===================================
 ''';
 }
