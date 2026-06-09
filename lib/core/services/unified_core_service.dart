@@ -2,45 +2,36 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 import 'package:riverpod/riverpod.dart';
-import '../oracle_si.dart';
+import '../empathic_si.dart';
 
 final unifiedCoreProvider = Provider<UnifiedCoreService>((ref) => UnifiedCoreService());
 
 class UnifiedCoreService {
-  final OracleSi _si = OracleSi();
+  final EmpathicSi _si = EmpathicSi();
   bool _siAwake = false;
 
   Future<String> execute(String command, {String? target, Map<String, String>? options}) async {
     try {
       if (command == 'awaken' || command == 'start_ai') {
-        if (!_siAwake) { _siAwake = true; _si.awaken(); return '🔮 Si العراف استيقظ. أنا أرى التهديدات قبل حدوثها.'; }
-        return '🔮 Si مستيقظ بالفعل.';
+        if (!_siAwake) { _siAwake = true; _si.awaken(); return '💫 Si المتقمص استيقظ. أنا معك يا سيدي. أعرف ما تريد.'; }
+        return '💫 Si مستيقظ بالفعل.';
+      }
+
+      // جميع الأوامر تمر عبر التوقع
+      if (_siAwake && command != 'help' && command != 'si_status') {
+        return await _si.executeWithAnticipation(command, target: target);
+      }
+
+      if (command == 'empathic_report' || command == 'تقرير_التزامن') {
+        return const JsonEncoder.withIndent('  ').convert(_si.getEmpathicReport());
       }
 
       if (command == 'oracle_report' || command == 'تقرير_العراف') {
         return const JsonEncoder.withIndent('  ').convert(_si.getOracleReport());
       }
 
-      if (command == 'predictions' || command == 'تنبؤات') {
-        return const JsonEncoder.withIndent('  ').convert(_si._predictedThreats);
-      }
-
-      if (command == 'risk_level' || command == 'مستوى_الخطر') {
-        return 'مستوى الخطر الحالي: ${_si._calculateOverallRisk()}';
-      }
-
       if (command == 'guard_report' || command == 'تقرير_الحماية') {
         return const JsonEncoder.withIndent('  ').convert(_si.getGuardianReport());
-      }
-
-      if (command == 'block_ip' || command == 'حظر') {
-        if (target == null) return '⚠️ استخدم: block_ip <IP>';
-        _si._blockIP(target, 'manual_block');
-        return '🚫 تم حظر $target';
-      }
-
-      if (command == 'threat_log' || command == 'سجل_التهديدات') {
-        return const JsonEncoder.withIndent('  ').convert(_si._threatLog.reversed.take(20).toList());
       }
 
       if (command == 'loyalty_report' || command == 'تقرير_الولاء') return const JsonEncoder.withIndent('  ').convert(_si.getLoyaltyReport());
@@ -68,14 +59,12 @@ class UnifiedCoreService {
   String _systemInfo() => 'OS: ${Platform.operatingSystem}\nCPU: ${Platform.numberOfProcessors} cores\nDart: ${Platform.version}';
 
   String _helpText() => '''
-=== PROJECT ZION - ORACLE Si ===
-awaken / start_ai      - إيقاظ العراف
-oracle_report          - تقرير البصيرة
-predictions / تنبؤات   - التهديدات المتوقعة
-risk_level / مستوى_الخطر - مستوى الخطر
+=== PROJECT ZION - EMPATHIC Si ===
+awaken / start_ai      - إيقاظ المتقمص
+empathic_report        - تقرير التزامن
+oracle_report          - تقرير العراف
 guard_report           - تقرير الحماية
-block_ip <IP>          - حظر IP
-threat_log             - سجل التهديدات
+loyalty_report         - تقرير الولاء
 si_status              - حالة Si
 help                   - مساعدة
 ================================
