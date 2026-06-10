@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/wm/window_manager.dart';
-import 'zion_browser.dart';
-import 'zion_file_manager.dart';
-import 'zion_text_editor.dart';
 import 'zion_desktop_icons.dart';
 
 class ZionTaskbar extends StatelessWidget {
@@ -59,9 +56,6 @@ class ZionTaskbar extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             _StartMenuItem(icon: Icons.terminal, label: 'الطرفية', onTap: () { Navigator.pop(ctx); wm.open('Terminal', const KaliTerminalWindow(), width: 600, height: 400); }),
-            _StartMenuItem(icon: Icons.language, label: 'متصفح Zion', onTap: () { Navigator.pop(ctx); wm.open('Browser', const ZionBrowser(), width: 800, height: 500); }),
-            _StartMenuItem(icon: Icons.folder, label: 'مدير الملفات', onTap: () { Navigator.pop(ctx); wm.open('Files', const ZionFileManager(), width: 600, height: 400); }),
-            _StartMenuItem(icon: Icons.edit, label: 'محرر النصوص', onTap: () { Navigator.pop(ctx); wm.open('Editor', const ZionTextEditor(), width: 600, height: 450); }),
             _StartMenuItem(icon: Icons.travel_explore, label: 'Nmap', onTap: () { Navigator.pop(ctx); wm.open('Nmap', const KaliTerminalWindow(initialCommand: 'nmap --help'), width: 600, height: 400); }),
             _StartMenuItem(icon: Icons.bug_report, label: 'Metasploit', onTap: () { Navigator.pop(ctx); wm.open('Metasploit', const KaliTerminalWindow(initialCommand: 'msfconsole -q -x "version; exit"'), width: 700, height: 450); }),
             _StartMenuItem(icon: Icons.storage, label: 'SQLmap', onTap: () { Navigator.pop(ctx); wm.open('SQLmap', const KaliTerminalWindow(initialCommand: 'sqlmap --help'), width: 600, height: 400); }),
