@@ -45,7 +45,9 @@ class _CosmicTerminalState extends State<CosmicTerminal> {
   Future<void> _executeCommand(String command) async {
     if (command.trim().isEmpty) return;
     
-    _addLine('zion@os:~$ ${command.trim()}');
+    // استخدام concat لتجنب مشكلة $
+    final prompt = 'zion@os:~$ ';
+    _addLine('$prompt${command.trim()}');
     _inputController.clear();
     setState(() => _isExecuting = true);
 
@@ -65,6 +67,7 @@ class _CosmicTerminalState extends State<CosmicTerminal> {
       _addLine('');
     } else if (cmd == 'clear') {
       setState(() => _lines.clear());
+      _addLine('Screen cleared');
     } else if (cmd == 'exit') {
       Navigator.pop(context);
     } else if (cmd == 'scan') {
@@ -76,10 +79,12 @@ class _CosmicTerminalState extends State<CosmicTerminal> {
       await Future.delayed(const Duration(seconds: 2));
       _addLine('Attack completed successfully!');
     } else if (cmd == 'status') {
+      _addLine('');
       _addLine('System Status:');
       _addLine('  Version: Zion OS v3.0');
       _addLine('  Tools: 1000+');
       _addLine('  Status: Ready');
+      _addLine('');
     } else {
       _addLine('Command not found: $cmd. Type "help" for available commands.');
     }
@@ -90,6 +95,8 @@ class _CosmicTerminalState extends State<CosmicTerminal> {
 
   @override
   Widget build(BuildContext context) {
+    final promptText = 'zion@os:~$ ';
+    
     return Scaffold(
       backgroundColor: Colors.black,
       body: Column(
@@ -129,7 +136,7 @@ class _CosmicTerminalState extends State<CosmicTerminal> {
             padding: const EdgeInsets.all(12),
             child: Row(
               children: [
-                const Text('zion@os:~$ ', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                Text(promptText, style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
                 Expanded(
                   child: TextField(
                     controller: _inputController,
