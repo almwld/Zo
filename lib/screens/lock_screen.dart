@@ -13,6 +13,7 @@ class _LockScreenState extends State<LockScreen> {
   final String _correctPin = "1234";
   String _errorMessage = "";
   String _currentTime = "";
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -32,12 +33,19 @@ class _LockScreenState extends State<LockScreen> {
     });
   }
 
-  void _unlock() {
+  void _unlock() async {
     if (_pinController.text == _correctPin) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const ZionDesktop()),
-      );
+      setState(() => _isLoading = true);
+      
+      // تأخير بسيط للتأكد من الانتقال السلس
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ZionDesktop()),
+        );
+      }
     } else {
       setState(() {
         _errorMessage = "PIN INCORRECT";
@@ -61,75 +69,91 @@ class _LockScreenState extends State<LockScreen> {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [Color(0xFF00BCD4), Color(0xFF006064)]),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(color: const Color(0xFF00BCD4).withOpacity(0.5), blurRadius: 30),
-                  ],
-                ),
-                child: const Center(
-                  child: Text("Z", style: TextStyle(fontSize: 55, fontWeight: FontWeight.bold, color: Colors.black)),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text("ZION OS 2027", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFF00BCD4))),
-              const SizedBox(height: 50),
-              Text(_currentTime, style: const TextStyle(fontSize: 48, color: Color(0xFF00BCD4), fontWeight: FontWeight.bold)),
-              const SizedBox(height: 50),
-              Container(
-                width: 280,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: const Color(0xFF00BCD4).withOpacity(0.5)),
-                ),
-                child: TextField(
-                  controller: _pinController,
-                  obscureText: true,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Color(0xFF00BCD4), fontSize: 24, letterSpacing: 10),
-                  keyboardType: TextInputType.number,
-                  maxLength: 4,
-                  decoration: const InputDecoration(
-                    hintText: "••••",
-                    hintStyle: TextStyle(color: Colors.white30, fontSize: 24),
-                    border: InputBorder.none,
-                    counterText: "",
+          child: _isLoading
+              ? const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(color: Color(0xFF00BCD4)),
+                      SizedBox(height: 16),
+                      Text('Loading...', style: TextStyle(color: Color(0xFF00BCD4))),
+                    ],
                   ),
-                  onSubmitted: (_) => _unlock(),
-                ),
-              ),
-              if (_errorMessage.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 15),
-                  child: Text(_errorMessage, style: const TextStyle(color: Colors.red)),
-                ),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: 300,
-                child: GridView.count(
-                  shrinkWrap: true,
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 15,
-                  crossAxisSpacing: 15,
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildButton("1"), _buildButton("2"), _buildButton("3"),
-                    _buildButton("4"), _buildButton("5"), _buildButton("6"),
-                    _buildButton("7"), _buildButton("8"), _buildButton("9"),
-                    _buildButton(""), _buildButton("0"), _buildButton("⌫"),
+                    // Logo
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(colors: [Color(0xFF00BCD4), Color(0xFF006064)]),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(color: const Color(0xFF00BCD4).withOpacity(0.5), blurRadius: 30),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Text("Z", style: TextStyle(fontSize: 55, fontWeight: FontWeight.bold, color: Colors.black)),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text("ZION OS 2027", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFF00BCD4))),
+                    const SizedBox(height: 50),
+                    Text(_currentTime, style: const TextStyle(fontSize: 48, color: Color(0xFF00BCD4), fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 50),
+                    
+                    // PIN Input
+                    Container(
+                      width: 280,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(color: const Color(0xFF00BCD4).withOpacity(0.5)),
+                      ),
+                      child: TextField(
+                        controller: _pinController,
+                        obscureText: true,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Color(0xFF00BCD4), fontSize: 24, letterSpacing: 10),
+                        keyboardType: TextInputType.number,
+                        maxLength: 4,
+                        decoration: const InputDecoration(
+                          hintText: "••••",
+                          hintStyle: TextStyle(color: Colors.white30, fontSize: 24),
+                          border: InputBorder.none,
+                          counterText: "",
+                        ),
+                        onSubmitted: (_) => _unlock(),
+                      ),
+                    ),
+                    if (_errorMessage.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15),
+                        child: Text(_errorMessage, style: const TextStyle(color: Colors.red)),
+                      ),
+                    const SizedBox(height: 40),
+                    
+                    // Number Pad
+                    SizedBox(
+                      width: 300,
+                      child: GridView.count(
+                        shrinkWrap: true,
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 15,
+                        crossAxisSpacing: 15,
+                        children: [
+                          _buildButton("1"), _buildButton("2"), _buildButton("3"),
+                          _buildButton("4"), _buildButton("5"), _buildButton("6"),
+                          _buildButton("7"), _buildButton("8"), _buildButton("9"),
+                          _buildButton(""), _buildButton("0"), _buildButton("⌫"),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ],
-          ),
         ),
       ),
     );

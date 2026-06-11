@@ -1,19 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../models/app_model.dart';
-import '../core/theme/theme_manager.dart';
-import '../screens/theme_selector.dart';
-import 'apps/terminal_app.dart';
-import 'apps/network_scanner.dart';
-import 'apps/wifi_scanner.dart';
-import 'apps/exploit_db.dart';
-import 'apps/crypto_tool.dart';
-import 'apps/stealth_mode.dart';
-import 'apps/password_cracker.dart';
-import 'apps/ddos_attack.dart';
-import 'apps/forensics.dart';
-import 'apps/database_hacking.dart';
-import 'apps/cloud_attacks.dart';
 
 class ZionDesktop extends StatefulWidget {
   const ZionDesktop({super.key});
@@ -34,17 +19,17 @@ class _ZionDesktopState extends State<ZionDesktop> {
   ];
 
   final List<Map<String, dynamic>> _apps = [
-    {"name": "TERMINAL", "icon": Icons.terminal, "category": "TOOLS", "screen": const TerminalApp()},
-    {"name": "CRYPTO", "icon": Icons.lock, "category": "TOOLS", "screen": const CryptoToolApp()},
-    {"name": "WIFI", "icon": Icons.wifi, "category": "ATTACK", "screen": const WiFiScannerApp()},
-    {"name": "EXPLOIT", "icon": Icons.bug_report, "category": "ATTACK", "screen": const ExploitDBApp()},
-    {"name": "CRACKER", "icon": Icons.vpn_key, "category": "ATTACK", "screen": const PasswordCrackerApp()},
-    {"name": "DDOS", "icon": Icons.speed, "category": "ATTACK", "screen": const DDoSAttackApp()},
-    {"name": "DATABASE", "icon": Icons.storage, "category": "ATTACK", "screen": const DatabaseHackingApp()},
-    {"name": "CLOUD", "icon": Icons.cloud, "category": "ATTACK", "screen": const CloudAttacksApp()},
-    {"name": "NETWORK", "icon": Icons.network_wifi, "category": "ANALYSIS", "screen": const NetworkScannerApp()},
-    {"name": "FORENSICS", "icon": Icons.search, "category": "ANALYSIS", "screen": const ForensicsApp()},
-    {"name": "STEALTH", "icon": Icons.visibility_off, "category": "DEFENSE", "screen": const StealthModeApp()},
+    {"name": "TERMINAL", "icon": Icons.terminal, "category": "TOOLS"},
+    {"name": "CRYPTO", "icon": Icons.lock, "category": "TOOLS"},
+    {"name": "WIFI", "icon": Icons.wifi, "category": "ATTACK"},
+    {"name": "EXPLOIT", "icon": Icons.bug_report, "category": "ATTACK"},
+    {"name": "CRACKER", "icon": Icons.vpn_key, "category": "ATTACK"},
+    {"name": "DDOS", "icon": Icons.speed, "category": "ATTACK"},
+    {"name": "DATABASE", "icon": Icons.storage, "category": "ATTACK"},
+    {"name": "CLOUD", "icon": Icons.cloud, "category": "ATTACK"},
+    {"name": "NETWORK", "icon": Icons.network_wifi, "category": "ANALYSIS"},
+    {"name": "FORENSICS", "icon": Icons.search, "category": "ANALYSIS"},
+    {"name": "STEALTH", "icon": Icons.visibility_off, "category": "DEFENSE"},
   ];
 
   @override
@@ -66,24 +51,14 @@ class _ZionDesktopState extends State<ZionDesktop> {
   }
 
   void _openApp(Map<String, dynamic> app) {
-    if (app['screen'] != null) {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => app['screen']));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Coming Soon'), backgroundColor: Color(0xFF00BCD4)),
-      );
-    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Opening ${app['name']}...'), backgroundColor: const Color(0xFF00BCD4)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final appModel = Provider.of<AppModel>(context);
-    final themeManager = Provider.of<ThemeManager>(context);
     final filteredApps = _apps.where((app) => app['category'] == _categories[_selectedIndex]['name']).toList();
-    
-    final primaryColor = themeManager.currentTheme == AppTheme.cyberGreen 
-        ? const Color(0xFF00FF41) 
-        : const Color(0xFF00BCD4);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -92,7 +67,7 @@ class _ZionDesktopState extends State<ZionDesktop> {
           gradient: RadialGradient(
             center: Alignment.center,
             radius: 1.5,
-            colors: [primaryColor.withOpacity(0.05), Colors.black, Colors.black],
+            colors: [const Color(0xFF00BCD4).withOpacity(0.05), Colors.black, Colors.black],
           ),
         ),
         child: Column(
@@ -103,36 +78,13 @@ class _ZionDesktopState extends State<ZionDesktop> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.9),
-                border: Border(bottom: BorderSide(color: primaryColor.withOpacity(0.3))),
+                border: Border(bottom: BorderSide(color: const Color(0xFF00BCD4).withOpacity(0.3))),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('ZION OS 2027', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const ThemeSelector()));
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(Icons.palette, color: primaryColor, size: 20),
-                        ),
-                      ),
-                      const SizedBox(width: 15),
-                      IconButton(
-                        icon: Icon(Icons.brightness_6, color: primaryColor, size: 20),
-                        onPressed: () => appModel.toggleTheme(),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(_currentTime, style: TextStyle(color: primaryColor, fontSize: 14)),
-                    ],
-                  ),
+                  const Text('ZION OS 2027', style: TextStyle(color: Color(0xFF00BCD4), fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text(_currentTime, style: const TextStyle(color: Color(0xFF00BCD4), fontSize: 14)),
                 ],
               ),
             ),
@@ -150,19 +102,19 @@ class _ZionDesktopState extends State<ZionDesktop> {
                       child: Container(
                         margin: const EdgeInsets.symmetric(horizontal: 5),
                         decoration: BoxDecoration(
-                          color: isSelected ? primaryColor.withOpacity(0.2) : Colors.transparent,
+                          color: isSelected ? const Color(0xFF00BCD4).withOpacity(0.2) : Colors.transparent,
                           borderRadius: BorderRadius.circular(25),
-                          border: Border.all(color: primaryColor.withOpacity(isSelected ? 0.8 : 0.3)),
+                          border: Border.all(color: const Color(0xFF00BCD4).withOpacity(isSelected ? 0.8 : 0.3)),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(_categories[index]['icon'], color: primaryColor, size: 18),
+                            Icon(_categories[index]['icon'], color: const Color(0xFF00BCD4), size: 18),
                             const SizedBox(width: 8),
                             Text(
                               _categories[index]['name'],
                               style: TextStyle(
-                                color: primaryColor,
+                                color: const Color(0xFF00BCD4),
                                 fontSize: 12,
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                               ),
@@ -199,7 +151,7 @@ class _ZionDesktopState extends State<ZionDesktop> {
                           colors: [Colors.white.withOpacity(0.08), Colors.white.withOpacity(0.02)],
                         ),
                         borderRadius: BorderRadius.circular(15),
-                        border: Border.all(color: primaryColor.withOpacity(0.3)),
+                        border: Border.all(color: const Color(0xFF00BCD4).withOpacity(0.3)),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -208,10 +160,10 @@ class _ZionDesktopState extends State<ZionDesktop> {
                             width: 50,
                             height: 50,
                             decoration: BoxDecoration(
-                              color: primaryColor.withOpacity(0.1),
+                              color: const Color(0xFF00BCD4).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Icon(app['icon'], color: primaryColor, size: 28),
+                            child: Icon(app['icon'], color: const Color(0xFF00BCD4), size: 28),
                           ),
                           const SizedBox(height: 8),
                           Text(
@@ -233,26 +185,26 @@ class _ZionDesktopState extends State<ZionDesktop> {
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.8),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: primaryColor.withOpacity(0.2)),
+                border: Border.all(color: const Color(0xFF00BCD4).withOpacity(0.2)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildDockIcon(Icons.terminal, 'TERM', primaryColor),
+                  _buildDockIcon(Icons.terminal, 'TERM'),
                   const SizedBox(width: 15),
-                  _buildDockIcon(Icons.network_wifi, 'NET', primaryColor),
+                  _buildDockIcon(Icons.network_wifi, 'NET'),
                   const SizedBox(width: 15),
-                  _buildDockIcon(Icons.wifi, 'WIFI', primaryColor),
+                  _buildDockIcon(Icons.wifi, 'WIFI'),
                   const SizedBox(width: 15),
-                  _buildDockIcon(Icons.lock, 'LOCK', primaryColor),
+                  _buildDockIcon(Icons.lock, 'LOCK'),
                   const SizedBox(width: 15),
-                  _buildDockIcon(Icons.visibility_off, 'HIDE', primaryColor),
+                  _buildDockIcon(Icons.visibility_off, 'HIDE'),
                   const SizedBox(width: 15),
-                  _buildDockIcon(Icons.vpn_key, 'KEY', primaryColor),
+                  _buildDockIcon(Icons.vpn_key, 'KEY'),
                   const SizedBox(width: 15),
-                  Container(width: 1, height: 30, color: primaryColor.withOpacity(0.3)),
+                  Container(width: 1, height: 30, color: const Color(0xFF00BCD4).withOpacity(0.3)),
                   const SizedBox(width: 15),
-                  _buildDockIcon(Icons.apps, 'APPS', primaryColor),
+                  _buildDockIcon(Icons.apps, 'APPS'),
                 ],
               ),
             ),
@@ -262,7 +214,7 @@ class _ZionDesktopState extends State<ZionDesktop> {
     );
   }
 
-  Widget _buildDockIcon(IconData icon, String label, Color primaryColor) {
+  Widget _buildDockIcon(IconData icon, String label) {
     return GestureDetector(
       onTap: () {},
       child: Column(
@@ -272,9 +224,7 @@ class _ZionDesktopState extends State<ZionDesktop> {
             width: 45,
             height: 45,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [primaryColor, primaryColor.withOpacity(0.5)],
-              ),
+              gradient: const LinearGradient(colors: [Color(0xFF00BCD4), Color(0xFF006064)]),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: Colors.white, size: 24),
