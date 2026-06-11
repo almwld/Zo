@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/app_model.dart';
+import '../core/theme/theme_manager.dart';
+import '../screens/theme_selector.dart';
 import 'apps/terminal_app.dart';
 import 'apps/network_scanner.dart';
 import 'apps/wifi_scanner.dart';
@@ -76,6 +78,7 @@ class _ZionDesktopState extends State<ZionDesktop> {
   @override
   Widget build(BuildContext context) {
     final appModel = Provider.of<AppModel>(context);
+    final themeManager = Provider.of<ThemeManager>(context);
     final filteredApps = _apps.where((app) => app['category'] == _categories[_selectedIndex]['name']).toList();
 
     return Scaffold(
@@ -85,7 +88,9 @@ class _ZionDesktopState extends State<ZionDesktop> {
           gradient: RadialGradient(
             center: Alignment.center,
             radius: 1.5,
-            colors: [const Color(0xFF00BCD4).withOpacity(0.05), Colors.black, Colors.black],
+            colors: [themeManager.currentTheme == AppTheme.cyberGreen 
+                ? const Color(0xFF00FF41).withOpacity(0.05)
+                : const Color(0xFF00BCD4).withOpacity(0.05), Colors.black, Colors.black],
           ),
         ),
         child: Column(
@@ -96,14 +101,31 @@ class _ZionDesktopState extends State<ZionDesktop> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.9),
-                border: Border(bottom: BorderSide(color: const Color(0xFF00BCD4).withOpacity(0.3))),
+                border: Border(bottom: BorderSide(color: themeManager.currentTheme == AppTheme.cyberGreen 
+                    ? const Color(0xFF00FF41).withOpacity(0.3)
+                    : const Color(0xFF00BCD4).withOpacity(0.3))),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('ZION OS 2027', style: TextStyle(color: Color(0xFF00BCD4), fontWeight: FontWeight.bold, fontSize: 16)),
+                  const Text('ZION OS 2027', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
                   Row(
                     children: [
+                      // Theme Selector Button
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => const ThemeSelector()));
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(Icons.palette, color: Color(0xFF00BCD4), size: 20),
+                        ),
+                      ),
+                      const SizedBox(width: 15),
                       IconButton(
                         icon: const Icon(Icons.brightness_6, color: Color(0xFF00BCD4), size: 20),
                         onPressed: () => appModel.toggleTheme(),
@@ -129,16 +151,24 @@ class _ZionDesktopState extends State<ZionDesktop> {
                       child: Container(
                         margin: const EdgeInsets.symmetric(horizontal: 5),
                         decoration: BoxDecoration(
-                          color: isSelected ? const Color(0xFF00BCD4).withOpacity(0.2) : Colors.transparent,
+                          color: isSelected ? (themeManager.currentTheme == AppTheme.cyberGreen 
+                              ? const Color(0xFF00FF41).withOpacity(0.2)
+                              : const Color(0xFF00BCD4).withOpacity(0.2)) : Colors.transparent,
                           borderRadius: BorderRadius.circular(25),
-                          border: Border.all(color: const Color(0xFF00BCD4).withOpacity(isSelected ? 0.8 : 0.3)),
+                          border: Border.all(color: (themeManager.currentTheme == AppTheme.cyberGreen 
+                              ? const Color(0xFF00FF41)
+                              : const Color(0xFF00BCD4)).withOpacity(isSelected ? 0.8 : 0.3)),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(_categories[index]['icon'], color: const Color(0xFF00BCD4), size: 18),
+                            Icon(_categories[index]['icon'], color: themeManager.currentTheme == AppTheme.cyberGreen 
+                                ? const Color(0xFF00FF41)
+                                : const Color(0xFF00BCD4), size: 18),
                             const SizedBox(width: 8),
-                            Text(_categories[index]['name'], style: const TextStyle(color: Color(0xFF00BCD4), fontSize: 12, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                            Text(_categories[index]['name'], style: TextStyle(color: themeManager.currentTheme == AppTheme.cyberGreen 
+                                ? const Color(0xFF00FF41)
+                                : const Color(0xFF00BCD4), fontSize: 12, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
                           ],
                         ),
                       ),
@@ -171,7 +201,9 @@ class _ZionDesktopState extends State<ZionDesktop> {
                           colors: [Colors.white.withOpacity(0.08), Colors.white.withOpacity(0.02)],
                         ),
                         borderRadius: BorderRadius.circular(15),
-                        border: Border.all(color: const Color(0xFF00BCD4).withOpacity(0.3)),
+                        border: Border.all(color: (themeManager.currentTheme == AppTheme.cyberGreen 
+                            ? const Color(0xFF00FF41)
+                            : const Color(0xFF00BCD4)).withOpacity(0.3)),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -180,10 +212,14 @@ class _ZionDesktopState extends State<ZionDesktop> {
                             width: 50,
                             height: 50,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF00BCD4).withOpacity(0.1),
+                              color: (themeManager.currentTheme == AppTheme.cyberGreen 
+                                  ? const Color(0xFF00FF41)
+                                  : const Color(0xFF00BCD4)).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Icon(app['icon'], color: const Color(0xFF00BCD4), size: 28),
+                            child: Icon(app['icon'], color: themeManager.currentTheme == AppTheme.cyberGreen 
+                                ? const Color(0xFF00FF41)
+                                : const Color(0xFF00BCD4), size: 28),
                           ),
                           const SizedBox(height: 8),
                           Text(app['name'], style: const TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w500)),
@@ -202,26 +238,30 @@ class _ZionDesktopState extends State<ZionDesktop> {
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.8),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFF00BCD4).withOpacity(0.2)),
+                border: Border.all(color: (themeManager.currentTheme == AppTheme.cyberGreen 
+                    ? const Color(0xFF00FF41)
+                    : const Color(0xFF00BCD4)).withOpacity(0.2)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildDockIcon(Icons.terminal, 'TERM'),
+                  _buildDockIcon(Icons.terminal, 'TERM', themeManager),
                   const SizedBox(width: 15),
-                  _buildDockIcon(Icons.network_wifi, 'NET'),
+                  _buildDockIcon(Icons.network_wifi, 'NET', themeManager),
                   const SizedBox(width: 15),
-                  _buildDockIcon(Icons.wifi, 'WIFI'),
+                  _buildDockIcon(Icons.wifi, 'WIFI', themeManager),
                   const SizedBox(width: 15),
-                  _buildDockIcon(Icons.lock, 'LOCK'),
+                  _buildDockIcon(Icons.lock, 'LOCK', themeManager),
                   const SizedBox(width: 15),
-                  _buildDockIcon(Icons.visibility_off, 'HIDE'),
+                  _buildDockIcon(Icons.visibility_off, 'HIDE', themeManager),
                   const SizedBox(width: 15),
-                  _buildDockIcon(Icons.vpn_key, 'KEY'),
+                  _buildDockIcon(Icons.vpn_key, 'KEY', themeManager),
                   const SizedBox(width: 15),
-                  Container(width: 1, height: 30, color: const Color(0xFF00BCD4).withOpacity(0.3)),
+                  Container(width: 1, height: 30, color: (themeManager.currentTheme == AppTheme.cyberGreen 
+                      ? const Color(0xFF00FF41)
+                      : const Color(0xFF00BCD4)).withOpacity(0.3)),
                   const SizedBox(width: 15),
-                  _buildDockIcon(Icons.apps, 'APPS'),
+                  _buildDockIcon(Icons.apps, 'APPS', themeManager),
                 ],
               ),
             ),
@@ -231,7 +271,7 @@ class _ZionDesktopState extends State<ZionDesktop> {
     );
   }
 
-  Widget _buildDockIcon(IconData icon, String label) {
+  Widget _buildDockIcon(IconData icon, String label, ThemeManager themeManager) {
     return GestureDetector(
       onTap: () {},
       child: Column(
@@ -241,7 +281,11 @@ class _ZionDesktopState extends State<ZionDesktop> {
             width: 45,
             height: 45,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFF00BCD4), Color(0xFF006064)]),
+              gradient: LinearGradient(
+                colors: themeManager.currentTheme == AppTheme.cyberGreen 
+                    ? [const Color(0xFF00FF41), const Color(0xFF009926)]
+                    : [const Color(0xFF00BCD4), const Color(0xFF006064)],
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: Colors.white, size: 24),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'core/theme/theme_manager.dart';
 import 'screens/lock_screen.dart';
-import 'models/app_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,17 +13,19 @@ class ZionOSApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AppModel(),
-      child: MaterialApp(
-        title: 'Zion OS 2027',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.dark().copyWith(
-          scaffoldBackgroundColor: Colors.black,
-          primaryColor: const Color(0xFF00BCD4),
-          colorScheme: const ColorScheme.dark(primary: Color(0xFF00BCD4)),
-        ),
-        home: const LockScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeManager()),
+      ],
+      child: Consumer<ThemeManager>(
+        builder: (context, themeManager, child) {
+          return MaterialApp(
+            title: 'Zion OS 2027',
+            debugShowCheckedModeBanner: false,
+            theme: themeManager.getThemeData(),
+            home: const LockScreen(),
+          );
+        },
       ),
     );
   }
