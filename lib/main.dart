@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'core/theme/theme_manager.dart';
+import 'core/theme/theme_provider.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/backup_service.dart';
 import 'core/services/power_service.dart';
@@ -55,20 +55,20 @@ class ZionOSApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider.value(value: notificationService),
         ChangeNotifierProvider.value(value: powerService),
-        ChangeNotifierProvider(create: (_) => ThemeManager()),
         Provider.value(value: backupService),
         Provider.value(value: networkService),
         Provider.value(value: loggingService),
         Provider.value(value: browserService),
       ],
-      child: Consumer<ThemeManager>(
-        builder: (context, themeManager, child) {
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
           return MaterialApp(
             title: 'Zion OS 2027',
             debugShowCheckedModeBanner: false,
-            theme: themeManager.getThemeData(),
+            theme: themeProvider.themeData,
             home: const LockScreen(),
           );
         },

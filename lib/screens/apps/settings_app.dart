@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import '../../core/theme/theme_provider.dart';
 
 class SettingsApp extends StatefulWidget {
   const SettingsApp({super.key});
@@ -9,18 +11,17 @@ class SettingsApp extends StatefulWidget {
 }
 
 class _SettingsAppState extends State<SettingsApp> {
-  bool _darkMode = true;
   bool _notifications = true;
   bool _soundEffects = true;
   bool _vibration = true;
   bool _autoUpdate = true;
   bool _stealthMode = false;
-  String _selectedTheme = 'Turquoise';
+  String _selectedThemeColor = 'Turquoise';
   String _selectedLanguage = 'English';
   double _animationSpeed = 1.0;
   int _fontSize = 14;
 
-  final List<String> _themes = ['Turquoise', 'Cyan', 'Green', 'Blue', 'Purple', 'Orange'];
+  final List<String> _themeColors = ['Turquoise', 'Cyan', 'Green', 'Blue', 'Purple', 'Orange'];
   final List<String> _languages = ['English', 'العربية', 'Français', 'Español'];
 
   @override
@@ -32,13 +33,12 @@ class _SettingsAppState extends State<SettingsApp> {
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _darkMode = prefs.getBool('dark_mode') ?? true;
       _notifications = prefs.getBool('notifications') ?? true;
       _soundEffects = prefs.getBool('sound_effects') ?? true;
       _vibration = prefs.getBool('vibration') ?? true;
       _autoUpdate = prefs.getBool('auto_update') ?? true;
       _stealthMode = prefs.getBool('stealth_mode') ?? false;
-      _selectedTheme = prefs.getString('theme') ?? 'Turquoise';
+      _selectedThemeColor = prefs.getString('theme_color') ?? 'Turquoise';
       _selectedLanguage = prefs.getString('language') ?? 'English';
       _animationSpeed = prefs.getDouble('animation_speed') ?? 1.0;
       _fontSize = prefs.getInt('font_size') ?? 14;
@@ -52,7 +52,7 @@ class _SettingsAppState extends State<SettingsApp> {
     if (value is double) await prefs.setDouble(key, value);
     if (value is int) await prefs.setInt(key, value);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$key saved'), backgroundColor: Color(0xFF00BCD4)),
+      SnackBar(content: Text('$key saved'), backgroundColor: const Color(0xFF00BCD4)),
     );
   }
 
@@ -146,25 +146,27 @@ class _SettingsAppState extends State<SettingsApp> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: isDark ? Colors.black : Colors.grey[100],
       appBar: AppBar(
         title: const Text('Settings', style: TextStyle(color: Color(0xFF00BCD4))),
-        backgroundColor: Colors.black,
+        backgroundColor: isDark ? Colors.black : Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF00BCD4)),
+          icon: Icon(Icons.arrow_back, color: isDark ? const Color(0xFF00BCD4) : const Color(0xFF00838F)),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: ListView(
         children: [
           _buildSectionHeader(Icons.palette, 'Appearance'),
+          // Theme Mode Toggle (Dark/Light)
+          _buildSwitchTile('Dark Mode', isDark, (v) => themeProvider.toggleTheme()),
           _buildThemeSelector(),
           _buildLanguageSelector(),
           _buildFontSizeSlider(),
-          _buildSwitchTile('Dark Mode', _darkMode, (v) {
-            setState(() { _darkMode = v; _saveSetting('dark_mode', v); });
-          }),
           
           _buildSectionHeader(Icons.tune, 'Behavior'),
           _buildSwitchTile('Notifications', _notifications, (v) {
@@ -248,30 +250,32 @@ class _SettingsAppState extends State<SettingsApp> {
   }
 
   Widget _buildSectionHeader(IconData icon, String title) {
+    final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
       child: Row(
         children: [
           Icon(icon, color: const Color(0xFF00BCD4), size: 20),
           const SizedBox(width: 10),
-          Text(title, style: const TextStyle(color: Color(0xFF00BCD4), fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(title, style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontSize: 16, fontWeight: FontWeight.bold)),
         ],
       ),
     );
   }
 
   Widget _buildSwitchTile(String title, bool value, Function(bool) onChanged) {
+    final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[200],
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: const TextStyle(color: Colors.white, fontSize: 14)),
+          Text(title, style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontSize: 14)),
           Switch(value: value, onChanged: onChanged, activeColor: const Color(0xFF00BCD4)),
         ],
       ),
@@ -279,13 +283,14 @@ class _SettingsAppState extends State<SettingsApp> {
   }
 
   Widget _buildInfoTile(IconData icon, String title, String subtitle, VoidCallback onTap) {
+    final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[200],
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -296,12 +301,12 @@ class _SettingsAppState extends State<SettingsApp> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(color: Colors.white, fontSize: 14)),
-                  Text(subtitle, style: const TextStyle(color: Colors.white54, fontSize: 11)),
+                  Text(title, style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontSize: 14)),
+                  Text(subtitle, style: TextStyle(color: isDark ? Colors.white54 : Colors.black54, fontSize: 11)),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: Colors.white54, size: 18),
+            const Icon(Icons.chevron_right, color: Color(0xFF00BCD4), size: 18),
           ],
         ),
       ),
@@ -309,29 +314,30 @@ class _SettingsAppState extends State<SettingsApp> {
   }
 
   Widget _buildThemeSelector() {
+    final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[200],
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Theme Color', style: TextStyle(color: Colors.white, fontSize: 14)),
+          const Text('Theme Color', style: TextStyle(color: Color(0xFF00BCD4), fontSize: 14)),
           const SizedBox(height: 10),
           Wrap(
             spacing: 10,
-            children: _themes.map((color) => GestureDetector(
-              onTap: () => setState(() { _selectedTheme = color; _saveSetting('theme', color); }),
+            children: _themeColors.map((color) => GestureDetector(
+              onTap: () => setState(() { _selectedThemeColor = color; _saveSetting('theme_color', color); }),
               child: Container(
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
                   color: _getColorFromName(color),
                   shape: BoxShape.circle,
-                  border: _selectedTheme == color ? Border.all(color: Colors.white, width: 2) : null,
+                  border: _selectedThemeColor == color ? Border.all(color: Colors.white, width: 2) : null,
                 ),
               ),
             )).toList(),
@@ -342,11 +348,12 @@ class _SettingsAppState extends State<SettingsApp> {
   }
 
   Widget _buildLanguageSelector() {
+    final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[200],
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -369,11 +376,12 @@ class _SettingsAppState extends State<SettingsApp> {
   }
 
   Widget _buildFontSizeSlider() {
+    final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[200],
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -381,7 +389,7 @@ class _SettingsAppState extends State<SettingsApp> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Font Size', style: TextStyle(color: Colors.white, fontSize: 14)),
+              const Text('Font Size', style: TextStyle(color: Color(0xFF00BCD4), fontSize: 14)),
               Text('$_fontSize', style: const TextStyle(color: Color(0xFF00BCD4))),
             ],
           ),
@@ -401,11 +409,12 @@ class _SettingsAppState extends State<SettingsApp> {
   }
 
   Widget _buildSliderTile(String title, double value, double min, double max, Function(double) onChanged) {
+    final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[200],
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -413,7 +422,7 @@ class _SettingsAppState extends State<SettingsApp> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title, style: const TextStyle(color: Colors.white, fontSize: 14)),
+              Text(title, style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontSize: 14)),
               Text('${value.toStringAsFixed(1)}x', style: const TextStyle(color: Color(0xFF00BCD4))),
             ],
           ),
