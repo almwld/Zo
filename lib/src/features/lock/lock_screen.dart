@@ -11,15 +11,9 @@ class LockScreen extends StatefulWidget {
 class _LockScreenState extends State<LockScreen> {
   final LocalAuthentication _localAuth = LocalAuthentication();
   final TextEditingController _pinController = TextEditingController();
-  bool _isAuthenticating = false;
   String _errorMessage = '';
 
   Future<void> _authenticateWithBiometrics() async {
-    setState(() {
-      _isAuthenticating = true;
-      _errorMessage = '';
-    });
-
     try {
       final authenticated = await _localAuth.authenticate(
         localizedReason: 'Verify your identity to unlock Zion OS',
@@ -28,16 +22,11 @@ class _LockScreenState extends State<LockScreen> {
           biometricOnly: true,
         ),
       );
-
       if (authenticated) {
         Navigator.pushReplacementNamed(context, '/home');
-      } else {
-        setState(() => _errorMessage = 'Authentication failed');
       }
     } catch (e) {
       setState(() => _errorMessage = 'Biometric not available');
-    } finally {
-      setState(() => _isAuthenticating = false);
     }
   }
 
@@ -71,12 +60,7 @@ class _LockScreenState extends State<LockScreen> {
                 const SizedBox(height: 20),
                 const Text(
                   'ZION OS',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 4,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 40),
                 Container(
@@ -88,10 +72,7 @@ class _LockScreenState extends State<LockScreen> {
                   ),
                   child: Column(
                     children: [
-                      const Text(
-                        'Enter PIN to Unlock',
-                        style: TextStyle(color: Colors.white70),
-                      ),
+                      const Text('Enter PIN to Unlock', style: TextStyle(color: Colors.white70)),
                       const SizedBox(height: 20),
                       TextField(
                         controller: _pinController,
@@ -101,14 +82,9 @@ class _LockScreenState extends State<LockScreen> {
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           hintText: '****',
-                          hintStyle: const TextStyle(color: Colors.grey),
-                          enabledBorder: OutlineInputBorder(
+                          border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: const BorderSide(color: Color(0xFF00FF41)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFF00FF41), width: 2),
                           ),
                         ),
                         onSubmitted: (_) => _unlockWithPin(),
@@ -116,27 +92,17 @@ class _LockScreenState extends State<LockScreen> {
                       if (_errorMessage.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.only(top: 12),
-                          child: Text(
-                            _errorMessage,
-                            style: const TextStyle(color: Colors.red),
-                          ),
+                          child: Text(_errorMessage, style: const TextStyle(color: Colors.red)),
                         ),
                       const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: _authenticateWithBiometrics,
-                              icon: const Icon(Icons.fingerprint),
-                              label: const Text('Use Fingerprint'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF00FF41),
-                                foregroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                              ),
-                            ),
-                          ),
-                        ],
+                      ElevatedButton.icon(
+                        onPressed: _authenticateWithBiometrics,
+                        icon: const Icon(Icons.fingerprint),
+                        label: const Text('Use Fingerprint'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF00FF41),
+                          foregroundColor: Colors.black,
+                        ),
                       ),
                     ],
                   ),
