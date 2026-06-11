@@ -160,25 +160,25 @@ class _SettingsAppState extends State<SettingsApp> {
           _buildThemeSelector(),
           _buildLanguageSelector(),
           _buildFontSizeSlider(),
-          _buildSwitchTile('Dark Mode', _darkMode, (v) {
+          _buildSwitchTile(Icons.dark_mode, 'Dark Mode', _darkMode, (v) {
             setState(() { _darkMode = v; _saveSetting('dark_mode', v); });
           }),
           
           // Behavior Section
           _buildSectionHeader(Icons.tune, 'Behavior'),
-          _buildSwitchTile('Notifications', _notifications, (v) {
+          _buildSwitchTile(Icons.notifications, 'Notifications', _notifications, (v) {
             setState(() { _notifications = v; _saveSetting('notifications', v); });
           }),
-          _buildSwitchTile('Sound Effects', _soundEffects, (v) {
+          _buildSwitchTile(Icons.volume_up, 'Sound Effects', _soundEffects, (v) {
             setState(() { _soundEffects = v; _saveSetting('sound_effects', v); });
           }),
-          _buildSwitchTile('Vibration', _vibration, (v) {
+          _buildSwitchTile(Icons.vibration, 'Vibration', _vibration, (v) {
             setState(() { _vibration = v; _saveSetting('vibration', v); });
           }),
-          _buildSwitchTile('Auto Update', _autoUpdate, (v) {
+          _buildSwitchTile(Icons.update, 'Auto Update', _autoUpdate, (v) {
             setState(() { _autoUpdate = v; _saveSetting('auto_update', v); });
           }),
-          _buildSwitchTile('Stealth Mode', _stealthMode, (v) {
+          _buildSwitchTile(Icons.visibility_off, 'Stealth Mode', _stealthMode, (v) {
             setState(() { _stealthMode = v; _saveSetting('stealth_mode', v); });
           }),
           
@@ -191,11 +191,11 @@ class _SettingsAppState extends State<SettingsApp> {
           _buildSectionHeader(Icons.security, 'Security'),
           _buildInfoTile(Icons.lock, 'Change PIN', 'Update security PIN', _showChangePinDialog),
           _buildInfoTile(Icons.fingerprint, 'Biometric', 'Enable fingerprint unlock', () {}),
-          _buildInfoTile(Icons.security, 'Encryption', 'AES-256 Active', () {}),
+          _buildInfoTile(Icons.encryption, 'Encryption', 'AES-256 Active', () {}),
           
           // About Section
           _buildSectionHeader(Icons.info, 'About'),
-          _buildInfoTile(Icons.info, 'Version', 'Zion OS 4.0.0', () {}),
+          _buildInfoTile(Icons.version, 'Version', 'Zion OS 4.0.0', () {}),
           _buildInfoTile(Icons.build, 'Build', '2027.06.11', () {}),
           _buildInfoTile(Icons.code, 'Developer', 'Zion Security Team', _showAboutDialog),
           
