@@ -26,6 +26,10 @@ import 'apps/email_client.dart';
 import 'apps/date_calculator.dart';
 import 'apps/unit_converter.dart';
 import 'apps/percentage_calculator.dart';
+import 'apps/qr_scanner_simple.dart';
+import 'apps/calendar_simple.dart';
+import 'apps/gallery_simple.dart';
+import 'apps/documents_simple.dart';
 
 class ZionDesktop extends StatefulWidget {
   const ZionDesktop({super.key});
@@ -80,6 +84,10 @@ class _ZionDesktopState extends State<ZionDesktop> {
     {"name": "SHARE", "icon": Icons.share, "category": "TOOLS", "screen": const FileSharingApp()},
     {"name": "EMAIL", "icon": Icons.email, "category": "TOOLS", "screen": const EmailClient()},
     {"name": "SETTINGS", "icon": Icons.settings, "category": "TOOLS", "screen": const SettingsApp()},
+    {"name": "QR CODE", "icon": Icons.qr_code_scanner, "category": "TOOLS", "screen": const QRScannerApp()},
+    {"name": "CALENDAR", "icon": Icons.calendar_today, "category": "TOOLS", "screen": const CalendarApp()},
+    {"name": "GALLERY", "icon": Icons.photo_library, "category": "TOOLS", "screen": const GalleryApp()},
+    {"name": "DOCUMENTS", "icon": Icons.description, "category": "TOOLS", "screen": const DocumentsApp()},
   ];
 
   @override
