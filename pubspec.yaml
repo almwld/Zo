@@ -26,6 +26,8 @@ dependencies:
   device_info_plus: ^9.1.0
   battery_plus: ^5.0.0
   webview_flutter: ^4.4.0
+  responsive_framework: ^1.0.0
+  window_manager: ^0.3.9
 
 dev_dependencies:
   flutter_test:
@@ -46,7 +48,3 @@ flutter_launcher_icons:
   ios: false
   image_path: "assets/icons/app_icon.png"
   min_sdk_android: 21
-  responsive_framework: ^1.0.0
-  window_size: ^0.1.0
-  responsive_framework: ^1.0.0
-  window_size: ^0.1.0
