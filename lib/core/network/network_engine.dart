@@ -16,6 +16,7 @@ class NetworkEngine {
       );
     }
     await Future.wait(futures);
+    activeHosts.sort();
     return activeHosts;
   }
   
@@ -26,22 +27,31 @@ class NetworkEngine {
         final socket = await Socket.connect(host, port, timeout: const Duration(seconds: 1));
         socket.destroy();
         openPorts.add(port);
-      } catch (_) {}
+        print("✅ Port $port open on $host");
+      } catch (_) {
+        print("❌ Port $port closed on $host");
+      }
     }
+    openPorts.sort();
     return openPorts;
   }
   
-  static Future<String?> getBanner(String host, int port) async {
-    try {
-      final socket = await Socket.connect(host, port, timeout: const Duration(seconds: 2));
-      final completer = Completer<String?>();
-      socket.listen((data) {
-        completer.complete(String.fromCharCodes(data).trim());
-        socket.destroy();
-      });
-      return await completer.future.timeout(const Duration(seconds: 2));
-    } catch (_) {
-      return null;
+  static Future<Map<int, String>> scanWithBanner(String host, List<int> ports) async {
+    final results = <int, String>{};
+    for (final port in ports) {
+      try {
+        final socket = await Socket.connect(host, port, timeout: const Duration(seconds: 2));
+        final completer = Completer<String>();
+        socket.listen((data) {
+          completer.complete(String.fromCharCodes(data).trim());
+          socket.destroy();
+        });
+        final banner = await completer.future.timeout(const Duration(seconds: 2), onTimeout: () => 'No banner');
+        if (banner.isNotEmpty && banner != 'No banner') {
+          results[port] = banner;
+        }
+      } catch (_) {}
     }
+    return results;
   }
 }

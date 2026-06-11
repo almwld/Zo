@@ -22,8 +22,8 @@ class _DesktopHomeState extends State<DesktopHome> {
   ];
 
   final List<Map<String, dynamic>> _apps = [
-    {"name": "Terminal", "icon": FontAwesomeIcons.terminal, "category": "Tools", "screen": TerminalApp()},
-    {"name": "Network Scanner", "icon": FontAwesomeIcons.networkWired, "category": "Analysis", "screen": NetworkScannerApp()},
+    {"name": "Terminal", "icon": FontAwesomeIcons.terminal, "category": "Tools", "screen": const TerminalApp()},
+    {"name": "Network Scanner", "icon": FontAwesomeIcons.networkWired, "category": "Analysis", "screen": const NetworkScannerApp()},
     {"name": "WiFi Suite", "icon": FontAwesomeIcons.wifi, "category": "Attack", "screen": null},
     {"name": "Exploit DB", "icon": FontAwesomeIcons.bug, "category": "Attack", "screen": null},
     {"name": "Crypto Tool", "icon": FontAwesomeIcons.lock, "category": "Defense", "screen": null},
@@ -59,7 +59,7 @@ class _DesktopHomeState extends State<DesktopHome> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${app['name']} قيد التطوير...'), backgroundColor: const Color(0xFF00FF41)),
+        const SnackBar(content: Text('قيد التطوير...'), backgroundColor: Color(0xFF00FF41)),
       );
     }
   }

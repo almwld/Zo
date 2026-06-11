@@ -12,7 +12,6 @@ class _TerminalAppState extends State<TerminalApp> {
   final TextEditingController _commandController = TextEditingController();
   final List<String> _output = [];
   final ScrollController _scrollController = ScrollController();
-  String _currentDir = '/data/data/com.termux/files/home';
 
   void _executeCommand() async {
     final command = _commandController.text.trim();
@@ -39,10 +38,6 @@ class _TerminalAppState extends State<TerminalApp> {
       });
     }
     
-    _scrollToBottom();
-  }
-
-  void _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 100), () {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
@@ -107,10 +102,7 @@ class _TerminalAppState extends State<TerminalApp> {
             ),
             child: Row(
               children: [
-                Text(
-                  _currentDir.split('/').last,
-                  style: const TextStyle(color: Color(0xFF00FF41), fontSize: 12),
-                ),
+                const Text("$", style: TextStyle(color: Color(0xFF00FF41), fontSize: 16)),
                 const SizedBox(width: 10),
                 Expanded(
                   child: TextField(
