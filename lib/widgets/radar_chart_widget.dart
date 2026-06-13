@@ -23,9 +23,7 @@ class RadarChartWidget extends StatelessWidget {
           ],
           radarBorderData: const BorderSide(color: Color(0xFF00BCD4), width: 1),
           titlePositionPercentageOffset: 1.2,
-          getTitle: (index, angle) => RadarChartTitle(text: titles[index], angle: angle, style: const TextStyle(color: Colors.white70, fontSize: 10)),
-          ticks: const [0.2, 0.4, 0.6, 0.8, 1.0],
-          tickBorderData: const BorderSide(color: Color(0xFF00BCD4), width: 0.5),
+          getTitle: (index, angle) => RadarChartTitle(text: titles[index], angle: angle),
         ),
       ),
     );

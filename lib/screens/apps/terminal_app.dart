@@ -277,5 +277,5 @@ class _TerminalAppState extends State<TerminalApp> {
   bool _showShortcuts = false;
 
   void _toggleShortcuts() {
-    setState(() => _showShortcuts = !_showShortcuts);
+    // setState removed
   }
