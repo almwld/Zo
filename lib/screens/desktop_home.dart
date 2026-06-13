@@ -348,3 +348,18 @@ class _ZionDesktopState extends State<ZionDesktop> {
     );
   }
 }
+
+  // إضافة زر عائم للرادار (يظهر في الأسفل)
+  FloatingActionButton(
+    onPressed: () => setState(() => _showRadarChart = !_showRadarChart),
+    child: Icon(_showRadarChart ? Icons.radar : Icons.radar_off),
+    backgroundColor: const Color(0xFF00BCD4),
+    foregroundColor: Colors.black,
+  ),
+
+  void _openAppWithFeedback(Map<String, dynamic> app) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Opening ${app['name'].tr()}...'), duration: const Duration(milliseconds: 500), backgroundColor: const Color(0xFF00BCD4)),
+    );
+    _openApp(app);
+  }

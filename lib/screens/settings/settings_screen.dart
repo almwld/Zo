@@ -90,3 +90,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ));
   }
 }
+
+  void _resetAllSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    final tp = Provider.of<ThemeProvider>(context, listen: false);
+    await tp._loadSettings();
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('All settings reset'), backgroundColor: Color(0xFF00BCD4)));
+  }
+
+  // أضف هذا الزر في نهاية القائمة
+  ListTile(
+    title: const Text('Reset All Settings', style: TextStyle(color: Colors.red)),
+    trailing: const Icon(Icons.restore, color: Colors.red),
+    onTap: _resetAllSettings,
+  ),

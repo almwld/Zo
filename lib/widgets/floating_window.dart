@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
 
 class FloatingWindow extends StatefulWidget {
   final String title;
   final Widget child;
   final VoidCallback onClose;
+  final int windowId;
   final Size initialSize;
   final Offset initialPosition;
-  final int windowId;
-  
+
   const FloatingWindow({
     super.key,
     required this.title,
@@ -27,7 +26,6 @@ class _FloatingWindowState extends State<FloatingWindow> {
   late Offset _position;
   late Size _size;
   bool _isDragging = false;
-  bool _isResizing = false;
   bool _isMinimized = false;
 
   @override
@@ -46,34 +44,13 @@ class _FloatingWindowState extends State<FloatingWindow> {
         child: GestureDetector(
           onTap: () => setState(() => _isMinimized = false),
           child: Container(
-            width: 120,
-            height: 32,
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.9),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFF00BCD4), width: 1),
-            ),
-            child: Row(
-              children: [
-                const SizedBox(width: 8),
-                const Icon(Icons.window, color: Color(0xFF00BCD4), size: 16),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    widget.title,
-                    style: const TextStyle(color: Colors.white70, fontSize: 11),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close, size: 14, color: Colors.red),
-                  onPressed: widget.onClose,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
-                const SizedBox(width: 4),
-              ],
-            ),
+            width: 120, height: 32,
+            decoration: BoxDecoration(color: Colors.black.withOpacity(0.9), borderRadius: BorderRadius.circular(8), border: Border.all(color: const Color(0xFF00BCD4), width: 1)),
+            child: Row(children: [
+              const Icon(Icons.window, color: Color(0xFF00BCD4), size: 16),
+              Expanded(child: Text(widget.title, style: const TextStyle(color: Colors.white70, fontSize: 11), overflow: TextOverflow.ellipsis)),
+              IconButton(icon: const Icon(Icons.close, size: 14, color: Colors.red), onPressed: widget.onClose),
+            ]),
           ),
         ),
       );
@@ -89,74 +66,38 @@ class _FloatingWindowState extends State<FloatingWindow> {
           height: _size.height,
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.95),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: const Color(0xFF00BCD4).withOpacity(0.6), width: 1.5),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF00BCD4).withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(4, 4),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: const Color(0xFF00BCD4).withOpacity(0.3), blurRadius: 12)],
           ),
           child: Column(
             children: [
-              // Title bar (draggable)
+              // شريط العنوان (قابل للسحب)
               GestureDetector(
-                onPanUpdate: (details) {
-                  setState(() {
-                    _position += details.delta;
-                    _position = Offset(
-                      _position.dx.clamp(0, MediaQuery.of(context).size.width - _size.width),
-                      _position.dy.clamp(0, MediaQuery.of(context).size.height - _size.height - 50),
-                    );
-                  });
-                },
+                onPanUpdate: (d) => setState(() {
+                  _position += d.delta;
+                  _position = Offset(_position.dx.clamp(0, MediaQuery.of(context).size.width - _size.width), _position.dy.clamp(0, MediaQuery.of(context).size.height - _size.height - 50));
+                }),
                 child: Container(
                   height: 36,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF00BCD4).withOpacity(0.15),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12),
-                    ),
-                  ),
+                  decoration: BoxDecoration(color: const Color(0xFF00BCD4).withOpacity(0.15), borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
                   child: Row(
                     children: [
                       const SizedBox(width: 12),
-                      // Window controls
-                      GestureDetector(
-                        onTap: () => setState(() => _isMinimized = true),
-                        child: const Icon(Icons.horizontal_rule, color: Color(0xFF00BCD4), size: 18),
-                      ),
+                      GestureDetector(onTap: () => setState(() => _isMinimized = true), child: const Icon(Icons.horizontal_rule, color: Color(0xFF00BCD4), size: 18)),
                       const SizedBox(width: 8),
+                      GestureDetector(onTap: () => setState(() => _size = _size.width > 300 ? const Size(350, 500) : const Size(800, 600)), child: const Icon(Icons.crop_square, color: Color(0xFF00BCD4), size: 14)),
+                      const SizedBox(width: 8),
+                      GestureDetector(onTap: widget.onClose, child: const Icon(Icons.close, color: Colors.red, size: 18)),
+                      const Expanded(child: SizedBox()),
+                      Text(widget.title, style: const TextStyle(color: Color(0xFF00BCD4), fontSize: 12)),
+                      const Expanded(child: SizedBox()),
                       GestureDetector(
-                        onTap: () => setState(() {
-                          _size = (_size.width > 300) ? const Size(350, 500) : const Size(800, 600);
+                        onPanUpdate: (d) => setState(() {
+                          double newW = (_size.width + d.delta.dx).clamp(250.0, 600.0);
+                          double newH = (_size.height + d.delta.dy).clamp(300.0, 700.0);
+                          _size = Size(newW, newH);
                         }),
-                        child: const Icon(Icons.crop_square, color: Color(0xFF00BCD4), size: 14),
-                      ),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: widget.onClose,
-                        child: const Icon(Icons.close, color: Colors.red, size: 18),
-                      ),
-                      const Expanded(child: SizedBox()),
-                      // Title
-                      Text(
-                        widget.title,
-                        style: const TextStyle(color: Color(0xFF00BCD4), fontSize: 12, fontWeight: FontWeight.w500),
-                      ),
-                      const Expanded(child: SizedBox()),
-                      // Resize handle (bottom-right corner) - but placed in title bar for simplicity
-                      GestureDetector(
-                        onPanUpdate: (details) {
-                          setState(() {
-                            double newWidth = (_size.width + details.delta.dx).clamp(250.0, 600.0);
-                            double newHeight = (_size.height + details.delta.dy).clamp(300.0, 700.0);
-                            _size = Size(newWidth, newHeight);
-                          });
-                        },
                         child: const Icon(Icons.drag_handle, color: Colors.white54, size: 18),
                       ),
                       const SizedBox(width: 8),
@@ -164,16 +105,8 @@ class _FloatingWindowState extends State<FloatingWindow> {
                   ),
                 ),
               ),
-              // Content
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(12),
-                    bottomRight: Radius.circular(12),
-                  ),
-                  child: widget.child,
-                ),
-              ),
+              // محتوى النافذة
+              Expanded(child: ClipRRect(borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)), child: widget.child)),
             ],
           ),
         ),

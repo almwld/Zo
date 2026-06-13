@@ -15,20 +15,12 @@ class FloatingWindowManagerState extends State<FloatingWindowManager> {
 
   void openWindow(String title, Widget content, {Size? size, Offset? position}) {
     setState(() {
-      _windows.add(FloatingWindowInstance(
-        id: _nextId++,
-        title: title,
-        content: content,
-        size: size,
-        position: position,
-      ));
+      _windows.add(FloatingWindowInstance(id: _nextId++, title: title, content: content, size: size, position: position));
     });
   }
 
   void closeWindow(int id) {
-    setState(() {
-      _windows.removeWhere((w) => w.id == id);
-    });
+    setState(() => _windows.removeWhere((w) => w.id == id));
   }
 
   @override
@@ -56,12 +48,5 @@ class FloatingWindowInstance {
   final Widget content;
   final Size? size;
   final Offset? position;
-  
-  FloatingWindowInstance({
-    required this.id,
-    required this.title,
-    required this.content,
-    this.size,
-    this.position,
-  });
+  FloatingWindowInstance({required this.id, required this.title, required this.content, this.size, this.position});
 }
