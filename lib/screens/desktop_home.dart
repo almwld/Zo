@@ -24,6 +24,9 @@ class _ZionDesktopState extends State<ZionDesktop> {
 
   final List<Map<String, dynamic>> _apps = [
     {"name": "settings", "icon": Icons.settings, "category": "tools", "screen": const SettingsApp()},
+    {"name": "network_scanner", "icon": Icons.network_wifi, "category": "tools", "screen": const NetworkScannerApp()},
+    {"name": "wifi_scanner", "icon": Icons.wifi, "category": "tools", "screen": const WiFiScannerApp()},
+    {"name": "file_manager", "icon": Icons.folder, "category": "tools", "screen": const FileManagerApp()},
   ];
 
   @override

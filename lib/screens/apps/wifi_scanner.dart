@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
 
 class WiFiScannerApp extends StatefulWidget {
   const WiFiScannerApp({super.key});
@@ -23,8 +25,8 @@ class _WiFiScannerAppState extends State<WiFiScannerApp> {
   }
 
   Future<void> _checkPermissions() async {
-    final locationStatus = await Permission.location.status;
-    if (!locationStatus.isGranted) {
+    final status = await Permission.location.status;
+    if (!status.isGranted) {
       await Permission.location.request();
     }
     _hasPermission = await Permission.location.isGranted;
@@ -32,7 +34,7 @@ class _WiFiScannerAppState extends State<WiFiScannerApp> {
       _getCurrentWiFi();
       _scanWiFi();
     } else {
-      setState(() => _errorMessage = 'Location permission required to scan WiFi');
+      setState(() => _errorMessage = 'مطلوب صلاحية الموقع لمسح شبكات WiFi');
     }
   }
 
@@ -40,7 +42,7 @@ class _WiFiScannerAppState extends State<WiFiScannerApp> {
     try {
       final result = await Process.run('dumpsys', ['wifi'], runInShell: true);
       final output = result.stdout.toString();
-      final match = RegExp(r'mWifiInfo.*?SSID: "([^"]+)"', caseSensitive: false).firstMatch(output);
+      final match = RegExp(r'mWifiInfo.*?SSID: "([^"]+)"').firstMatch(output);
       if (match != null && match.group(1) != null && match.group(1) != '<unknown ssid>') {
         setState(() => _currentWiFi = match.group(1)!);
       }
@@ -49,7 +51,7 @@ class _WiFiScannerAppState extends State<WiFiScannerApp> {
 
   Future<void> _scanWiFi() async {
     if (!_hasPermission) {
-      setState(() => _errorMessage = 'Location permission required');
+      setState(() => _errorMessage = 'مطلوب صلاحية الموقع');
       return;
     }
 
@@ -62,60 +64,49 @@ class _WiFiScannerAppState extends State<WiFiScannerApp> {
     try {
       final result = await Process.run('dumpsys', ['wifi'], runInShell: true);
       final output = result.stdout.toString();
-      
-      final regex = RegExp(r'SSID: "([^"]+)".*?BSSID: ([0-9a-f:]+).*?RSSI: (-?\d+)', caseSensitive: false);
+      final regex = RegExp(r'SSID: "([^"]+)".*?RSSI: (-?\d+)');
       final matches = regex.allMatches(output);
-      
-      final networksList = <Map<String, String>>[];
+
       for (final match in matches) {
         final ssid = match.group(1);
-        final bssid = match.group(2);
-        final rssi = match.group(3);
-        if (ssid != null && ssid.isNotEmpty && ssid != 'unknown' && ssid != '<unknown ssid>' && ssid != '0x') {
-          networksList.add({
+        final rssi = match.group(2);
+        if (ssid != null && ssid.isNotEmpty && ssid != 'unknown' && ssid != '<unknown ssid>') {
+          _networks.add({
             'ssid': ssid,
-            'bssid': bssid ?? 'Unknown',
             'signal': rssi ?? '0',
           });
         }
       }
-      
+
       setState(() {
-        _networks = networksList;
         _isScanning = false;
         if (_networks.isEmpty) {
-          _errorMessage = 'No WiFi networks found. Make sure WiFi is enabled.';
+          _errorMessage = 'لم يتم العثور على شبكات WiFi';
         }
       });
     } catch (e) {
       setState(() {
-        _errorMessage = 'Error: $e';
+        _errorMessage = 'خطأ: $e';
         _isScanning = false;
       });
     }
   }
 
-  int _getSignalStrength(int rssi) {
-    if (rssi > -50) return 4;
-    if (rssi > -60) return 3;
-    if (rssi > -70) return 2;
-    return 1;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context);
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: theme.isDarkMode ? Colors.black : Colors.grey[50],
       appBar: AppBar(
-        title: const Text('WiFi Scanner', style: TextStyle(color: Color(0xFF00BCD4))),
-        backgroundColor: Colors.black,
+        title: Text('WiFi Scanner', style: TextStyle(color: theme.primaryColor)),
+        backgroundColor: theme.isDarkMode ? Colors.black : Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF00BCD4)),
+          icon: Icon(Icons.arrow_back, color: theme.primaryColor),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Color(0xFF00BCD4)),
+            icon: Icon(Icons.refresh, color: theme.primaryColor),
             onPressed: _scanWiFi,
           ),
         ],
@@ -134,27 +125,16 @@ class _WiFiScannerAppState extends State<WiFiScannerApp> {
                 children: [
                   const Icon(Icons.location_off, color: Colors.orange),
                   const SizedBox(width: 8),
-                  Expanded(
-                    child: const Text(
-                      'Location permission required to scan WiFi networks',
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: _checkPermissions,
-                    child: const Text('Grant', style: TextStyle(color: Color(0xFF00BCD4))),
-                  ),
+                  const Expanded(child: Text('مطلوب صلاحية الموقع لمسح شبكات WiFi')),
+                  TextButton(onPressed: _checkPermissions, child: const Text('منح', style: TextStyle(color: Color(0xFF00BCD4)))),
                 ],
               ),
             ),
-          
           Container(
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF00BCD4), Color(0xFF006064)],
-              ),
+              gradient: LinearGradient(colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.5)]),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
@@ -165,113 +145,57 @@ class _WiFiScannerAppState extends State<WiFiScannerApp> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Connected to:', style: TextStyle(color: Colors.white70, fontSize: 11)),
-                      Text(
-                        _currentWiFi.isNotEmpty ? _currentWiFi : 'Not connected',
-                        style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
+                      const Text('متصل بـ:', style: TextStyle(color: Colors.white70)),
+                      Text(_currentWiFi.isNotEmpty ? _currentWiFi : 'غير متصل', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
                 ElevatedButton(
                   onPressed: _isScanning ? null : _scanWiFi,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFF00BCD4),
-                  ),
-                  child: Text(_isScanning ? 'SCANNING...' : 'SCAN'),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: theme.primaryColor),
+                  child: Text(_isScanning ? 'جاري المسح...' : 'مسح'),
                 ),
               ],
             ),
           ),
-          
           if (_errorMessage.isNotEmpty)
             Container(
               padding: const EdgeInsets.all(12),
               margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.warning, color: Colors.orange, size: 20),
-                  const SizedBox(width: 8),
-                  Expanded(child: Text(_errorMessage, style: const TextStyle(color: Colors.white70, fontSize: 12))),
-                ],
-              ),
+              decoration: BoxDecoration(color: Colors.red.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+              child: Text(_errorMessage, style: const TextStyle(color: Colors.white70)),
             ),
-          
           Expanded(
             child: _isScanning
-                ? const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(color: Color(0xFF00BCD4)),
-                        SizedBox(height: 16),
-                        Text('Scanning for networks...', style: TextStyle(color: Colors.white38)),
-                      ],
-                    ),
-                  )
+                ? const Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text('جاري مسح الشبكات...', style: TextStyle(color: Colors.white38)),
+                  ]))
                 : _networks.isEmpty
-                    ? const Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.wifi_off, size: 64, color: Colors.white24),
-                            SizedBox(height: 16),
-                            Text('No networks found', style: TextStyle(color: Colors.white38)),
-                          ],
-                        ),
-                      )
+                    ? const Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                        Icon(Icons.wifi_off, size: 64, color: Colors.white24),
+                        SizedBox(height: 16),
+                        Text('لم يتم العثور على شبكات', style: TextStyle(color: Colors.white38)),
+                      ]))
                     : ListView.builder(
                         padding: const EdgeInsets.all(16),
                         itemCount: _networks.length,
                         itemBuilder: (context, index) {
-                          final network = _networks[index];
-                          final rssi = int.tryParse(network['signal'] ?? '-70') ?? -70;
-                          final strength = _getSignalStrength(rssi);
-                          
+                          final net = _networks[index];
                           return Container(
                             margin: const EdgeInsets.only(bottom: 12),
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.05),
+                              color: theme.isDarkMode ? Colors.white.withOpacity(0.05) : Colors.grey[200],
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFF00BCD4).withOpacity(0.3)),
                             ),
                             child: Row(
                               children: [
-                                Icon(
-                                  strength > 2 ? Icons.signal_cellular_alt : Icons.signal_cellular_alt,
-                                  color: strength > 2 ? Colors.green : Colors.orange,
-                                  size: 28,
-                                ),
+                                Icon(Icons.wifi, color: theme.primaryColor, size: 28),
                                 const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        network['ssid']!,
-                                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        network['bssid']!,
-                                        style: const TextStyle(color: Colors.white38, fontSize: 10),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Text(
-                                  '${rssi} dBm',
-                                  style: TextStyle(
-                                    color: strength > 2 ? Colors.green : Colors.orange,
-                                    fontSize: 12,
-                                  ),
-                                ),
+                                Expanded(child: Text(net['ssid']!, style: TextStyle(color: theme.isDarkMode ? Colors.white : Colors.black87))),
+                                Text('${net['signal']} dBm', style: TextStyle(color: theme.primaryColor)),
                               ],
                             ),
                           );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
 
 class FileManagerApp extends StatefulWidget {
   const FileManagerApp({super.key});
@@ -14,7 +16,6 @@ class _FileManagerAppState extends State<FileManagerApp> {
   List<FileSystemEntity> _items = [];
   bool _isLoading = true;
   bool _hasPermission = false;
-  String _errorMessage = '';
 
   @override
   void initState() {
@@ -30,15 +31,7 @@ class _FileManagerAppState extends State<FileManagerApp> {
     } else {
       _hasPermission = true;
     }
-    
-    if (_hasPermission) {
-      _loadItems();
-    } else {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'Storage permission required to access files';
-      });
-    }
+    if (_hasPermission) _loadItems();
   }
 
   Future<void> _loadItems() async {
@@ -56,17 +49,9 @@ class _FileManagerAppState extends State<FileManagerApp> {
           _items = items;
           _isLoading = false;
         });
-      } else {
-        setState(() {
-          _errorMessage = 'Directory does not exist';
-          _isLoading = false;
-        });
       }
     } catch (e) {
-      setState(() {
-        _errorMessage = 'Error: $e';
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
   }
 
@@ -79,14 +64,16 @@ class _FileManagerAppState extends State<FileManagerApp> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context);
+
     if (!_hasPermission) {
       return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: theme.isDarkMode ? Colors.black : Colors.grey[50],
         appBar: AppBar(
-          title: const Text('File Manager', style: TextStyle(color: Color(0xFF00BCD4))),
-          backgroundColor: Colors.black,
+          title: Text('File Manager', style: TextStyle(color: theme.primaryColor)),
+          backgroundColor: theme.isDarkMode ? Colors.black : Colors.white,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF00BCD4)),
+            icon: Icon(Icons.arrow_back, color: theme.primaryColor),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -96,12 +83,12 @@ class _FileManagerAppState extends State<FileManagerApp> {
             children: [
               const Icon(Icons.lock, size: 64, color: Colors.white24),
               const SizedBox(height: 16),
-              const Text('Storage permission required', style: TextStyle(color: Colors.white38)),
+              const Text('مطلوب صلاحية التخزين', style: TextStyle(color: Colors.white38)),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _checkPermission,
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00BCD4)),
-                child: const Text('Grant Permission', style: TextStyle(color: Colors.black)),
+                style: ElevatedButton.styleFrom(backgroundColor: theme.primaryColor),
+                child: const Text('منح الصلاحية', style: TextStyle(color: Colors.black)),
               ),
             ],
           ),
@@ -110,75 +97,37 @@ class _FileManagerAppState extends State<FileManagerApp> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: theme.isDarkMode ? Colors.black : Colors.grey[50],
       appBar: AppBar(
-        title: Text(_currentPath.split('/').last, style: const TextStyle(color: Color(0xFF00BCD4))),
-        backgroundColor: Colors.black,
+        title: Text(_currentPath.split('/').last, style: TextStyle(color: theme.primaryColor)),
+        backgroundColor: theme.isDarkMode ? Colors.black : Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF00BCD4)),
+          icon: Icon(Icons.arrow_back, color: theme.primaryColor),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Color(0xFF00BCD4)),
+            icon: Icon(Icons.refresh, color: theme.primaryColor),
             onPressed: _loadItems,
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            color: Colors.black.withOpacity(0.8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Text(
-                      _currentPath,
-                      style: const TextStyle(color: Color(0xFF00BCD4), fontSize: 11),
-                    ),
-                  ),
-                ),
-              ],
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: _items.length,
+              itemBuilder: (context, index) {
+                final item = _items[index];
+                final isDir = item is Directory;
+                return ListTile(
+                  leading: Icon(isDir ? Icons.folder : Icons.insert_drive_file, color: theme.primaryColor),
+                  title: Text(item.path.split('/').last, style: TextStyle(color: theme.isDarkMode ? Colors.white : Colors.black87)),
+                  onTap: () {
+                    if (isDir) _navigateTo(item.path);
+                  },
+                );
+              },
             ),
-          ),
-          if (_errorMessage.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.all(12),
-              color: Colors.red.withOpacity(0.1),
-              child: Text(_errorMessage, style: const TextStyle(color: Colors.red)),
-            ),
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator(color: Color(0xFF00BCD4)))
-                : _items.isEmpty
-                    ? const Center(child: Text('Empty folder', style: TextStyle(color: Colors.white38)))
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(8),
-                        itemCount: _items.length,
-                        itemBuilder: (context, index) {
-                          final item = _items[index];
-                          final isDirectory = item is Directory;
-                          final name = item.path.split('/').last;
-                          return ListTile(
-                            leading: Icon(
-                              isDirectory ? Icons.folder : Icons.insert_drive_file,
-                              color: isDirectory ? const Color(0xFF00BCD4) : Colors.white54,
-                            ),
-                            title: Text(name, style: const TextStyle(color: Colors.white)),
-                            onTap: () {
-                              if (isDirectory) {
-                                _navigateTo(item.path);
-                              }
-                            },
-                          );
-                        },
-                      ),
-          ),
-        ],
-      ),
     );
   }
 }

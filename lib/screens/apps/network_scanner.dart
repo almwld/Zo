@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../core/network/network_engine.dart';
+import 'dart:io';
+import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
 
 class NetworkScannerApp extends StatefulWidget {
   const NetworkScannerApp({super.key});
@@ -19,19 +21,21 @@ class _NetworkScannerAppState extends State<NetworkScannerApp> {
       _isScanning = true;
       _output = '🔍 جاري فحص الشبكة الفرعية ${_subnetController.text}.0/24...\n\n';
     });
-    
-    final hosts = await NetworkEngine.pingSweep(_subnetController.text);
-    
-    setState(() {
-      _output += '✅ تم العثور على ${hosts.length} جهاز نشط:\n\n';
-      if (hosts.isEmpty) {
-        _output += '   ❌ لا توجد أجهزة نشطة\n';
-      } else {
-        for (final host in hosts) {
-          _output += '   📡 $host\n';
+
+    final List<String> activeHosts = [];
+    for (var i = 1; i <= 254; i++) {
+      final ip = '${_subnetController.text}.$i';
+      try {
+        final result = await Process.run('ping', ['-c', '1', '-W', '1', ip], runInShell: true);
+        if (result.exitCode == 0) {
+          activeHosts.add(ip);
+          _output += '✅ $ip\n';
         }
-      }
-      _output += '\n⏱️ اكتمل الفحص';
+      } catch (_) {}
+    }
+
+    setState(() {
+      _output += '\n📊 تم العثور على ${activeHosts.length} جهاز نشط';
       _isScanning = false;
     });
   }
@@ -42,32 +46,33 @@ class _NetworkScannerAppState extends State<NetworkScannerApp> {
       _isScanning = true;
       _output = '🔍 جاري فحص المنافذ على ${_hostController.text}...\n\n';
     });
-    
-    final openPorts = await NetworkEngine.scanPorts(_hostController.text, ports);
-    
-    setState(() {
-      _output += '✅ نتائج فحص ${_hostController.text}:\n\n';
-      if (openPorts.isEmpty) {
-        _output += '   ❌ لا توجد منافذ مفتوحة\n';
-      } else {
-        for (final port in openPorts) {
-          _output += '   🔓 المنفذ $port مفتوح\n';
-        }
+
+    for (final port in ports) {
+      try {
+        final socket = await Socket.connect(_hostController.text, port, timeout: const Duration(seconds: 1));
+        socket.destroy();
+        _output += '✅ المنفذ $port مفتوح\n';
+      } catch (_) {
+        _output += '❌ المنفذ $port مغلق\n';
       }
-      _output += '\n⏱️ اكتمل الفحص';
+    }
+
+    setState(() {
+      _output += '\n✅ اكتمل الفحص';
       _isScanning = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context);
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: theme.isDarkMode ? Colors.black : Colors.grey[50],
       appBar: AppBar(
-        title: const Text('Network Scanner', style: TextStyle(color: Color(0xFF00FF41))),
-        backgroundColor: Colors.black,
+        title: Text('Network Scanner', style: TextStyle(color: theme.primaryColor)),
+        backgroundColor: theme.isDarkMode ? Colors.black : Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF00FF41)),
+          icon: Icon(Icons.arrow_back, color: theme.primaryColor),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -77,25 +82,25 @@ class _NetworkScannerAppState extends State<NetworkScannerApp> {
           children: [
             TextField(
               controller: _subnetController,
-              style: const TextStyle(color: Color(0xFF00FF41), fontSize: 16),
-              decoration: const InputDecoration(
-                labelText: '🌐 الشبكة الفرعية (مثال: 192.168.1)',
-                labelStyle: TextStyle(color: Color(0xFF00FF41)),
-                border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Color(0xFF00FF41))),
-                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Color(0xFF00FF41), width: 2)),
+              style: TextStyle(color: theme.isDarkMode ? Colors.white : Colors.black87),
+              decoration: InputDecoration(
+                labelText: 'الشبكة الفرعية (مثال: 192.168.1)',
+                labelStyle: TextStyle(color: theme.primaryColor),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: theme.primaryColor.withOpacity(0.5))),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: theme.primaryColor, width: 2)),
               ),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 12),
             TextField(
               controller: _hostController,
-              style: const TextStyle(color: Color(0xFF00FF41), fontSize: 16),
-              decoration: const InputDecoration(
-                labelText: '🎯 المضيف المستهدف (للمنافذ)',
-                labelStyle: TextStyle(color: Color(0xFF00FF41)),
-                border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Color(0xFF00FF41))),
-                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Color(0xFF00FF41), width: 2)),
+              style: TextStyle(color: theme.isDarkMode ? Colors.white : Colors.black87),
+              decoration: InputDecoration(
+                labelText: 'المضيف المستهدف (للمنافذ)',
+                labelStyle: TextStyle(color: theme.primaryColor),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: theme.primaryColor.withOpacity(0.5))),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: theme.primaryColor, width: 2)),
               ),
             ),
             const SizedBox(height: 20),
@@ -105,42 +110,42 @@ class _NetworkScannerAppState extends State<NetworkScannerApp> {
                   child: ElevatedButton(
                     onPressed: _isScanning ? null : _scanNetwork,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00FF41),
+                      backgroundColor: theme.primaryColor,
+                      foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 15),
                     ),
-                    child: const Text('📡 فحص الشبكة', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                    child: const Text('فحص الشبكة'),
                   ),
                 ),
-                const SizedBox(width: 15),
+                const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _isScanning ? null : _scanPorts,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00FF41),
+                      backgroundColor: theme.primaryColor,
+                      foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 15),
                     ),
-                    child: const Text('🔓 فحص المنافذ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                    child: const Text('فحص المنافذ'),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 20),
-            if (_isScanning)
-              const LinearProgressIndicator(color: Color(0xFF00FF41)),
+            if (_isScanning) LinearProgressIndicator(color: theme.primaryColor),
             const SizedBox(height: 10),
             Expanded(
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.95),
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: const Color(0xFF00FF41).withOpacity(0.3)),
+                  color: theme.isDarkMode ? Colors.white.withOpacity(0.05) : Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: SingleChildScrollView(
                   child: Text(
-                    _output,
-                    style: const TextStyle(color: Color(0xFF00FF41), fontFamily: 'monospace', fontSize: 13),
+                    _output.isEmpty ? 'نتائج الفحص ستظهر هنا...' : _output,
+                    style: TextStyle(color: theme.primaryColor, fontFamily: 'monospace'),
                   ),
                 ),
               ),
