@@ -27,6 +27,7 @@ class ZionOSApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => SoundService()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
@@ -42,7 +43,7 @@ class ZionOSApp extends StatelessWidget {
             ],
             supportedLocales: context.supportedLocales,
             locale: context.locale,
-            home: const LockScreen(),
+            home: const SplashScreen(),
           );
         },
       ),

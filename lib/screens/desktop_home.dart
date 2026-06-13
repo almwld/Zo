@@ -363,3 +363,25 @@ class _ZionDesktopState extends State<ZionDesktop> {
     );
     _openApp(app);
   }
+
+  // إضافة دالة تأكيد الخروج
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Exit Zion OS', style: TextStyle(color: Color(0xFF00BCD4))),
+        content: const Text('Are you sure you want to exit?', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.black,
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel', style: TextStyle(color: Colors.white54))),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Exit', style: TextStyle(color: Colors.red))),
+        ],
+      ),
+    )) ?? false;
+  }
+
+  // أضف هذا في بداية build
+  WillPopScope(
+    onWillPop: _onWillPop,
+    child: // باقي المحتوى
+  )

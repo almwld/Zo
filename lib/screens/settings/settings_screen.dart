@@ -105,3 +105,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
     trailing: const Icon(Icons.restore, color: Colors.red),
     onTap: _resetAllSettings,
   ),
+
+  // إضافة ألوان إضافية للثيم
+  final List<Color> _extraColors = [
+    Colors.pink, Colors.teal, Colors.indigo, Colors.amber, Colors.lime, Colors.deepOrange
+  ];
+
+  // إضافة قسم الألوان الإضافية في واجهة اختيار الألوان
+  Wrap(
+    spacing: 10,
+    children: _extraColors.map((color) => GestureDetector(
+      onTap: () => themeProvider.setPrimaryColor(color),
+      child: Container(width: 40, height: 40, decoration: BoxDecoration(color: color, shape: BoxShape.circle, border: themeProvider.primaryColor == color ? Border.all(color: Colors.white, width: 2) : null)),
+    )).toList(),
+  ),
+
+  // إضافة خيارات الصوت والاهتزاز في قسم السلوك
+  Consumer<SoundService>(
+    builder: (ctx, ss, _) => Column(
+      children: [
+        SwitchListTile(title: const Text('Sound Effects'), value: ss.soundEnabled, onChanged: (_) => ss.toggleSound(), activeColor: const Color(0xFF00BCD4)),
+        SwitchListTile(title: const Text('Vibration'), value: ss.vibrationEnabled, onChanged: (_) => ss.toggleVibration(), activeColor: const Color(0xFF00BCD4)),
+      ],
+    ),
+  ),
