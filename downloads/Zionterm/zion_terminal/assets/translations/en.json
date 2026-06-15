@@ -1,0 +1,76 @@
+{
+  "app_name": "Zion OS - Terminal",
+  "terminal": "Terminal",
+  "new_session": "New Session",
+  "close_session": "Close Session",
+  "settings": "Settings",
+  "help": "Help",
+  "about": "About",
+
+  "toolbar": {
+    "ctrl": "Ctrl",
+    "alt": "Alt",
+    "tab": "Tab",
+    "esc": "Esc",
+    "up": "Up",
+    "down": "Down",
+    "left": "Left",
+    "right": "Right",
+    "pipe": "Pipe",
+    "slash": "Slash",
+    "dash": "Dash"
+  },
+
+  "ai": {
+    "assistant": "AI Assistant",
+    "translate": "Translate",
+    "correct": "Correct",
+    "suggest": "Suggest",
+    "explain": "Explain",
+    "security": "Security Check",
+    "summarize": "Summarize"
+  },
+
+  "distros": {
+    "title": "Distributions",
+    "ubuntu": "Ubuntu",
+    "kali": "Kali Linux",
+    "debian": "Debian",
+    "arch": "Arch Linux",
+    "fedora": "Fedora",
+    "login": "Login",
+    "logout": "Logout",
+    "install": "Install",
+    "remove": "Remove"
+  },
+
+  "packages": {
+    "title": "Packages",
+    "install": "Install",
+    "update": "Update",
+    "upgrade": "Upgrade",
+    "remove": "Remove",
+    "search": "Search",
+    "list": "List",
+    "installed": "Installed"
+  },
+
+  "messages": {
+    "welcome": "Welcome to Zion OS Terminal",
+    "loading": "Loading...",
+    "ready": "Ready",
+    "error": "Error",
+    "warning": "Warning",
+    "success": "Success",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+
+  "security": {
+    "dangerous_command": "⚠️ Dangerous Command!",
+    "confirm_execution": "Are you sure you want to execute this?",
+    "blocked": "🚫 Dangerous command blocked",
+    "warning_rm": "Warning: Recursive delete",
+    "warning_chmod": "Warning: Dangerous permission change"
+  }
+}

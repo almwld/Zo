@@ -1,0 +1,12 @@
+*.apk
+*.aab
+*.jks
+*.keystore
+build/
+.dart_tools/
+.packages
+*.lock
+*.log
+.DS_Store
+*.pyc
+__pycache__/
