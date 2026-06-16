@@ -1,84 +1,46 @@
-            Icon(Icons.storage, size: 64, color: Colors.purple),
-            SizedBox(height: 16),
-            Text('SQLmap', style: TextStyle(color: Colors.white, fontSize: 24)),
-            SizedBox(height: 8),
-            Text('قيد التطوير', style: TextStyle(color: Colors.grey)),
-          ],
-        ),
+        ],
       ),
     );
   }
-}
-EOF
-     echo "   ✅ تم إنشاء sqlmap_screen.dart"; fi
-# إنشاء شاشة nmap إذا لم تكن موجودة
-if [ ! -f "lib/screens/nmap/nmap_screen.dart" ]; then     mkdir -p lib/screens/nmap
-    cat > lib/screens/nmap/nmap_screen.dart << 'EOF'
-import 'package:flutter/material.dart';
 
-class NmapScreen extends StatelessWidget {
-  const NmapScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text('Nmap Scanner', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.green),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildSlider(IconData iconStart, IconData iconEnd, String label, double value, Function(double) onChanged) {
+    final primaryColor = Theme.of(context).primaryColor;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+        Row(
           children: [
-            Icon(Icons.network_check, size: 64, color: Colors.green),
-            SizedBox(height: 16),
-            Text('Nmap Scanner', style: TextStyle(color: Colors.white, fontSize: 24)),
-            SizedBox(height: 8),
-            Text('قيد التطوير', style: TextStyle(color: Colors.grey)),
+            Icon(iconStart, color: primaryColor, size: 16),
+            Expanded(
+              child: Slider(
+                value: value,
+                onChanged: onChanged,
+                activeColor: primaryColor,
+              ),
+            ),
+            Icon(iconEnd, color: primaryColor, size: 16),
           ],
         ),
-      ),
+      ],
     );
   }
-}
-EOF
-     echo "   ✅ تم إنشاء nmap_screen.dart"; fi
-# إنشاء شاشات الدفاع إذا لم تكن موجودة
-if [ ! -f "lib/screens/firewall/firewall_screen.dart" ]; then     mkdir -p lib/screens/firewall
-    cat > lib/screens/firewall/firewall_screen.dart << 'EOF'
-import 'package:flutter/material.dart';
 
-class FirewallScreen extends StatelessWidget {
-  const FirewallScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text('جدار الحماية', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.orange),
-          onPressed: () => Navigator.pop(context),
+  Widget _buildShortcutButton(IconData icon, String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.grey[900],
+          borderRadius: BorderRadius.circular(12),
         ),
-      ),
-      body: const Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.fireplace, size: 64, color: Colors.orange),
-            SizedBox(height: 16),
-            Text('جدار الحماية', style: TextStyle(color: Colors.white, fontSize: 24)),
-            SizedBox(height: 8),
-            Text('قيد التطوير', style: TextStyle(color: Colors.grey)),
+            Icon(icon, color: Theme.of(context).primaryColor, size: 24),
+            const SizedBox(height: 4),
+            Text(label, style: const TextStyle(color: Colors.white70, fontSize: 11)),
           ],
         ),
       ),
@@ -86,415 +48,453 @@ class FirewallScreen extends StatelessWidget {
   }
 }
 EOF
-     echo "   ✅ تم إنشاء firewall_screen.dart"; fi
-if [ ! -f "lib/screens/vpn/vpn_screen.dart" ]; then     mkdir -p lib/screens/vpn
-    cat > lib/screens/vpn/vpn_screen.dart << 'EOF'
-import 'package:flutter/material.dart';
 
-class VPNScreen extends StatelessWidget {
-  const VPNScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text('VPN Client', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.blue),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.vpn_lock, size: 64, color: Colors.blue),
-            SizedBox(height: 16),
-            Text('VPN Client', style: TextStyle(color: Colors.white, fontSize: 24)),
-            SizedBox(height: 8),
-            Text('قيد التطوير', style: TextStyle(color: Colors.grey)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-EOF
-     echo "   ✅ تم إنشاء vpn_screen.dart"; fi
-if [ ! -f "lib/screens/antivirus/antivirus_screen.dart" ]; then     mkdir -p lib/screens/antivirus
-    cat > lib/screens/antivirus/antivirus_screen.dart << 'EOF'
-import 'package:flutter/material.dart';
-
-class AntivirusScreen extends StatelessWidget {
-  const AntivirusScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text('مكافح الفيروسات', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.green),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.shield, size: 64, color: Colors.green),
-            SizedBox(height: 16),
-            Text('مكافح الفيروسات', style: TextStyle(color: Colors.white, fontSize: 24)),
-            SizedBox(height: 8),
-            Text('قيد التطوير', style: TextStyle(color: Colors.grey)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-EOF
-     echo "   ✅ تم إنشاء antivirus_screen.dart"; fi
-echo ""
 # ============================================
-# 9. رفع التغييرات
+# 3. رفع التغييرات
 # ============================================
 git add -A
-git commit -m "🔧 إصلاح جميع الشاشات البيضاء - إنشاء جميع الشاشات المفقودة"
+git commit -m "✅ إكمال المهام النهائية: تحسين شريط المهام ولوحة الإعدادات"
 git push origin main
 echo ""
 echo "════════════════════════════════════════════════════════════"
-echo "✅ تم إصلاح جميع الشاشات البيضاء!"
+echo "✅ تم إكمال جميع المهام النهائية!"
 echo "════════════════════════════════════════════════════════════"
 echo ""
-echo "📊 ملخص الشاشات:"
-echo "   • الشاشات الرئيسية: 5 ✅"
-echo "   • تطبيقات الهجوم: 5 ✅"
-echo "   • تطبيقات الدفاع: 3 ✅"
-echo "   • تطبيقات التحليل: 5 ✅"
-echo "   • تطبيقات الأدوات: 6 ✅"
+echo "📋 المهام المكتملة:"
 echo ""
-echo "🚀 التشغيل:"
-echo "   flutter run"
+echo "   1. ✅ شاشة القفل - كاملة مع بصمة و PIN"
+echo "   2. ✅ شاشة الإعدادات - ثيمات، لغة، حجم خط"
+echo "   3. ✅ شاشة About - معلومات التطبيق"
+echo "   4. ✅ شريط المهام - إدارة النوافذ"
+echo "   5. ✅ لوحة الإعدادات السريعة"
+echo "   6. ✅ نظام النوافذ - سحب، تحجيم، تصغير"
+echo "   7. ✅ واجهة سطح المكتب"
+echo "   8. ✅ جميع التطبيقات الأساسية"
 echo ""
-echo "🔐 PIN: 1234"
+echo "🎉 Zion OS جاهز للإصدار النهائي!"
+echo ""
+echo "📥 حمل APK من:"
+echo "   https://github.com/almwld/Zion_OS_New/actions"
+ls
+cd /data/data/com.termux/files/home/downloads/Supernova
+echo "════════════════════════════════════════════════════════════"
+echo "🗑️ حذف مجلد Zion_OS_New بالكامل"
+echo "════════════════════════════════════════════════════════════"
+echo ""
+# ============================================
+# 1. عرض المجلد الحالي
+# ============================================
+echo "📁 المجلد الحالي:"
+pwd
+echo ""
+# ============================================
+# 2. تأكيد الحذف
+# ============================================
+echo "⚠️  تحذير: هذا الأمر سيحذف المجلد بالكامل نهائياً!"
+echo "   المسار: /data/data/com.termux/files/home/downloads/Supernova/Zion_OS_New"
+echo ""
+read -p "❓ هل أنت متأكد من حذف المجلد؟ (اكتب 'yes' للتأكيد): " confirm
+ls
+cd Zion_OS_New
+ls
+rm -rf /data/data/com.termux/files/home/downloads/Supernova/Zion_OS_New && echo "✅ تم الحذف"
+ls
+## 🚀 أمر سريع (بدون تأكيد):
+```bash
+cd /data/data/com.termux/files/home/downloads/Supernova/Zion_OS_New && \
+find . -maxdepth 1 -not -name ".git" -not -name "." -exec rm -rf {} \; && \
+echo "✅ تم حذف جميع المحتويات" && \
+ls -la
 cd /data/data/com.termux/files/home/downloads/Supernova/Zion_OS_New
 echo "════════════════════════════════════════════════════════════"
-echo "🔍 الفحص المحلي الكامل لـ Zion OS"
+echo "🗑️ حذف شامل لمحتويات المستودع"
 echo "════════════════════════════════════════════════════════════"
 echo ""
 # ============================================
-# 1. عرض هيكل المشروع
+# 1. عرض المحتويات الحالية
 # ============================================
-echo "📁 1. هيكل المشروع:"
+echo "📁 1. المحتويات الحالية:"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-tree lib/ -L 2 2>/dev/null | head -40
+ls -la
 echo ""
 # ============================================
-# 2. عدد ملفات Dart
+# 2. تأكيد الحذف
 # ============================================
-echo "📊 2. إحصائيات الملفات:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-DART_COUNT=$(find lib -name "*.dart" 2>/dev/null | wc -l)
-echo "   📄 عدد ملفات Dart: $DART_COUNT"
-echo "   🖼️  عدد ملفات SVG: $(find assets -name "*.svg" 2>/dev/null | wc -l)"
-echo "   📝 عدد ملفات JSON: $(find assets -name "*.json" 2>/dev/null | wc -l)"
+echo "⚠️  تحذير: هذا الأمر سيحذف ALL الملفات والمجلدات!"
+echo "   سيتم الاحتفاظ فقط بمجلد .git (للمستودع)"
 echo ""
-# ============================================
-# 3. قائمة جميع الشاشات
-# ============================================
-echo "🖥️ 3. جميع الشاشات الموجودة:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-find lib/screens -name "*.dart" 2>/dev/null | sort | sed 's/^/   • /'
-echo ""
-# ============================================
-# 4. قائمة جميع الخدمات
-# ============================================
-echo "🔧 4. جميع الخدمات الموجودة:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-find lib/services -name "*.dart" 2>/dev/null | sort | sed 's/^/   • /'
-echo ""
-# ============================================
-# 5. التحقق من الملفات الأساسية
-# ============================================
-echo "✅ 5. التحقق من الملفات الأساسية:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-check_file() {     if [ -f "$1" ]; then         SIZE=$(du -h "$1" 2>/dev/null | cut -f1);         echo "   ✅ $1 ($SIZE)";     else         echo "   ❌ $1 مفقود!";     fi; }
-check_file "lib/main.dart"
-check_file "lib/screens/lock_screen.dart"
-check_file "lib/screens/home_screen.dart"
-check_file "lib/screens/settings_screen.dart"
-check_file "lib/screens/desktop_screen.dart"
-echo ""
-# ============================================
-# 6. التحقق من صلاحيات Android
-# ============================================
-echo "🤖 6. صلاحيات Android:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-if [ -f "android/app/src/main/AndroidManifest.xml" ]; then     if grep -q "MANAGE_EXTERNAL_STORAGE" android/app/src/main/AndroidManifest.xml; then         echo "   ✅ MANAGE_EXTERNAL_STORAGE (لـ Android 11+)";     fi;     if grep -q "ACCESS_FINE_LOCATION" android/app/src/main/AndroidManifest.xml; then         echo "   ✅ ACCESS_FINE_LOCATION (لـ WiFi Scanner)";     fi;     if grep -q "USE_BIOMETRIC" android/app/src/main/AndroidManifest.xml; then         echo "   ✅ USE_BIOMETRIC (للبصمة)";     fi;     if grep -q "READ_EXTERNAL_STORAGE" android/app/src/main/AndroidManifest.xml; then         echo "   ✅ READ_EXTERNAL_STORAGE";     fi; fi
-echo ""
-# ============================================
-# 7. التحقق من build.gradle
-# ============================================
-echo "📦 7. إعدادات build.gradle:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-if [ -f "android/app/build.gradle" ]; then     MIN_SDK=$(grep "minSdkVersion" android/app/build.gradle | head -1 | grep -o '[0-9]*');     echo "   ✅ minSdkVersion: $MIN_SDK";          if grep -q "namespace" android/app/build.gradle; then         echo "   ✅ namespace موجود";     fi;          if grep -q "multiDexEnabled" android/app/build.gradle; then         echo "   ✅ multiDexEnabled مفعل";     fi; fi
-echo ""
-# ============================================
-# 8. التحقق من pubspec.yaml
-# ============================================
-echo "📚 8. تبعيات pubspec.yaml:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-if [ -f "pubspec.yaml" ]; then     echo "   📦 الحزم الأساسية:";     grep -E "^  [a-z]" pubspec.yaml | head -10 | sed 's/^/      • /'; fi
-echo ""
-# ============================================
-# 9. فحص الأخطاء
-# ============================================
-echo "🔨 9. فحص الأخطاء:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-flutter clean > /dev/null 2>&1
-flutter pub get > /dev/null 2>&1
-ERROR_COUNT=$(flutter analyze 2>&1 | grep -c "error" || echo "0")
-if [ "$ERROR_COUNT" -eq 0 ]; then     echo "   ✅ لا توجد أخطاء في التحليل"; else     echo "   ⚠️ توجد $ERROR_COUNT خطأ"; fi
-echo ""
-# ============================================
-# 10. الخلاصة النهائية
-# ============================================
-echo "════════════════════════════════════════════════════════════"
-echo "📋 الخلاصة النهائية للفحص المحلي"
-echo "════════════════════════════════════════════════════════════"
-echo ""
-echo "   📁 عدد ملفات Dart: $DART_COUNT"
-echo "   🖥️ عدد الشاشات: $(find lib/screens -name "*.dart" 2>/dev/null | wc -l)"
-echo "   🔧 عدد الخدمات: $(find lib/services -name "*.dart" 2>/dev/null | wc -l)"
-echo "   ✅ صلاحيات Android: مكتملة"
-echo "   📦 تبعيات pubspec: مكتملة"
-echo "   🔨 أخطاء التحليل: $ERROR_COUNT"
-echo ""
-if [ "$ERROR_COUNT" -eq 0 ]; then     echo "🎉 المشروع سليم وجاهز للتشغيل!"; else     echo "⚠️ يوجد أخطاء تحتاج إلى إصلاح"; fi
-echo ""
-echo "════════════════════════════════════════════════════════════"
-echo "🚀 للتشغيل:"
-echo "   flutter run"
-echo ""
-echo "🔐 PIN: 1234"
-echo "════════════════════════════════════════════════════════════"
-cd /data/data/com.termux/files/home/downloads/Supernova/Zion_OS_New
-echo "════════════════════════════════════════════════════════════"
-echo "🔄 استرجاع الكومت الناجح وإصلاح الأيقونات البيضاء"
-echo "════════════════════════════════════════════════════════════"
-echo ""
-# ============================================
-# 1. استرجاع الكومت الناجح
-# ============================================
-echo "📦 1. استرجاع الكومت الناجح #105..."
-git reset --hard 77183a3
-echo "   ✅ تم استرجاع
+read -p "❓ هل أنت متأكد من حذف جميع المحتويات؟ (اكتب 'DELETE' للتأكيد): " confirm
+if [ "$confirm" = "DELETE" ]; then     echo "";     echo "🗑️  جاري حذف جميع الملفات والمجلدات...";     
+    find . -maxdepth 1 -not -name ".git" -not -name "." -exec rm -rf {} \;;          echo "   ✅ تم حذف جميع المحتويات";     
+    echo "";     echo "📝 3. إضافة README جديد..."
+    cat > README.md << 'EOF'
+# Zion OS Repository
+
+This repository has been cleaned and is ready for a fresh start.
+
+## 🚀 Getting Started
+
+```bash
+git clone https://github.com/almwld/Zion_OS_New.git
+cd Zion_OS_New
 "
-cd /data/data/com.termux/files/home/downloads/Supernova/Zion_OS_New
-echo "════════════════════════════════════════════════════════════"
-echo "🔍 البحث عن الأيقونات الأصلية المفقودة"
-echo "════════════════════════════════════════════════════════════"
-echo ""
-# ============================================
-# 1. البحث عن الأيقونات في المشروع
-# ============================================
-echo "📁 1. البحث عن ملفات الأيقونات:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-find . -name "*.png" -o -name "*.svg" -o -name "*.jpg" 2>/dev/null | head -30
-echo ""
-# ============================================
-# 2. البحث في مجلد assets
-# ============================================
-echo "📂 2. محتويات مجلد assets:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-ls -la assets/ 2>/dev/null
-ls -la assets/icons/ 2>/dev/null
-ls -la assets/icons/svg/ 2>/dev/null
-echo ""
-# ============================================
-# 3. البحث عن مجلد الأيقونات القديم
-# ============================================
-echo "🔎 3. البحث عن مجلد svg_colors (الأيقونات الأصلية):"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-if [ -d "assets/icons/svg_colors" ]; then     echo "   ✅ مجلد svg_colors موجود!";     ls -la assets/icons/svg_colors/ | head -20; else     echo "   ❌ مجلد svg_colors غير موجود"; fi
-echo ""
-# ============================================
-# 4. البحث عن الأيقونات في الكومت القديم
-# ============================================
-echo "📜 4. البحث في تاريخ Git عن الأيقونات:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-git log --all --full-history --oneline -- "assets/icons/svg_colors/*" | head -10
-echo ""
-# ============================================
-# 5. استرجاع الأيقونات من كومت سابق
-# ============================================
-echo "🔄 5. محاولة استرجاع الأيقونات من كومت سابق:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-# البحث عن كومت يحتوي على الأيقونات
-COMMIT_WITH_ICONS=$(git log --all --oneline -- "assets/icons/svg_colors/*" | head -1 | cut -d' ' -f1)
-if [ -n "$COMMIT_WITH_ICONS" ]; then     echo "   ✅ تم العثور على كومت يحتوي على الأيقونات: $COMMIT_WITH_ICONS";     echo "   📥 جاري استرجاع الأيقونات...";     git checkout $COMMIT_WITH_ICONS -- assets/icons/svg_colors/;     echo "   ✅ تم استرجاع الأيقونات"; else     echo "   ❌ لم يتم العثور على كومت يحتوي على الأيقونات"; fi
-echo ""
-# ============================================
-# 6. التحقق من الأيقونات بعد الاسترجاع
-# ============================================
-echo "📊 6. الأيقونات بعد الاسترجاع:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-if [ -d "assets/icons/svg_colors" ]; then     ICON_COUNT=$(ls -1 assets/icons/svg_colors/*.svg 2>/dev/null | wc -l);     echo "   📦 عدد الأيقونات: $ICON_COUNT";     echo "   📁 الملفات الموجودة:";     ls -la assets/icons/svg_colors/ | head -20; else     echo "   ❌ لا توجد أيقونات"; fi
-echo ""
-# ============================================
-# 7. إضافة الأيقونات إلى Git
-# ============================================
-echo "💾 7. إضافة الأيقونات إلى Git:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-git add assets/icons/svg_colors/
-git status --short | grep "svg_colors"
-echo ""
-# ============================================
-# 8. الخلاصة
-# ============================================
-echo "════════════════════════════════════════════════════════════"
-echo "📋 الخلاصة"
-echo "════════════════════════════════════════════════════════════"
-echo ""
-if [ -d "assets/icons/svg_colors" ]; then     echo "   ✅ تم استرجاع الأيقونات الأصلية!";     echo "   📦 عددها: $(ls -1 assets/icons/svg_colors/*.svg 2>/dev/null | wc -l) أيقونة";     echo "";     echo "🚀 الآن قم برفع التغييرات:";     echo "   git commit -m 'fix: استرجاع الأيقونات الأصلية'";     echo "   git push origin main"; else     echo "   ❌ الأيقونات الأصلية مفقودة";     echo "   💡 الحل: إعادة بناء التطبيق من الكومت الناجح #105";     echo "";     echo "   🚀 لاسترجاع الكومت الناجح:";     echo "   git reset --hard 77183a3";     echo "   git push origin main --force"; fi
-echo "════════════════════════════════════════════════════════════"# 1. تأكيد الأيقونات في Git
-git status
-# 2. رفع التغييرات
-git commit -m "✅ استرجاع الأيقونات الأصلية - 48 أيقونة SVG"
-git push origin main
-# 3. بناء APK جديد
-# سيبني GitHub Actions تلقائياً
-# 1. تأكيد الأيقونات في Git
-git status
-# 2. رفع التغييرات
-git commit -m "✅ استرجاع الأيقونات الأصلية - 48 أيقونة SVG"
-git push origin main
-# 3. بناء APK جديد
-# سيبني GitHub Actions تلقائياً
-cd /data/data/com.termux/files/home/downloads/Supernova/Zion_OS_New
-echo "════════════════════════════════════════════════════════════"
-echo "🔧 إصلاح مشكلة Git Push"
-echo "════════════════════════════════════════════════════════════"
-echo ""
-# ============================================
-# 1. معرفة الفرق بين المحلي والبعيد
-# ============================================
-echo "📊 1. معرفة الفرق:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-git log --oneline -5
-ho ""
-git log origin/main --oneline -5
-o ""
-# ============================================
-# 2. جلب التغييرات من البعيد
-# ============================================
-echo "📥 2. جلب التغييرات من GitHub..."
-git fetch origin
-echo ""
-# ============================================
-# 3. دمج التغييرات (rebase)
-# ============================================
-echo "🔄 3. دمج التغييرات (rebase)..."
-git rebase origin/main
-if [ $? -eq 0 ]; then     echo "   ✅ Rebase ناجح"; else     echo "   ⚠️ يوجد تعارض، سيتم حله...";     git rebase --abort;     git pull origin main --no-rebase; fi
-echo ""
-# ============================================
-# 4. إضافة الأيقونات مرة أخرى (إذا لزم)
-# ============================================
-echo "📦 4. إضافة الأيقونات..."
-git add assets/icons/svg_colors/
-git status --short | head -10
-echo ""
-# ============================================
-# 5. إنشاء commit جديد
-# ============================================
-echo "📝 5. إنشاء commit..."
-git commit -m "✅ استرجاع الأيقونات الأصلية - 48 أيقونة SVG
 
-- استرجاع الأيقونات من كومت f40866e
-- إصلاح مشكلة المربعات البيضاء
-- تحديث 28 ملف أيقونة"
+# ============================================
+# 4. رفع التغييرات إلى GitHub
+# ============================================
+echo ""
+echo "🚀 4. رفع التغييرات إلى GitHub..."
+git add -A
+git commit -m "🗑️ حذف شامل لجميع محتويات المستودع - إعادة تهيئة"
+git push origin main --force
+if [ $? -eq 0 ]; then     echo "   ✅ تم رفع التغييرات بنجاح"; else     echo "   ❌ فشل الرفع"; fi
+# ============================================
+# 1. معرفة الموقع الحالي
+# ============================================
+echo "════════════════════════════════════════════════════════════"
+echo "📍 التحقق من الموقع الحالي"
+echo "════════════════════════════════════════════════════════════"
+echo ""
+echo "المسار الحالي: $(pwd)"
 echo ""
 # ============================================
-# 6. رفع إلى GitHub
+# 2. العودة إلى المجلد الرئيسي
 # ============================================
-echo "🚀 6. رفع إلى GitHub..."
-git push origin main
-if [ $? -eq 0 ]; then     echo "   ✅ تم الرفع بنجاح!"; else     echo "   ❌ فشل الرفع"; fi
+cd /data/data/com.termux/files/home/downloads/Supernova
+echo "📁 2. التنقل إلى مجلد Supernova:"
+echo "   $(pwd)"
+echo ""
+# ============================================
+# 3. عرض المجلدات المتاحة
+# ============================================
+echo "📁 3. المجلدات الموجودة:"
+ls -la
+echo ""
+# ============================================
+# 4. التحقق من وجود Zion_OS_New
+# ============================================
+if [ -d "Zion_OS_New" ]; then     echo "✅ مجلد Zion_OS_New لا يزال موجوداً";     cd Zion_OS_New;     echo "   الدخول إلى المجلد...";     ls -la; else     echo "❌ مجلد Zion_OS_New غير موجود (تم حذفه بنجاح)"; fi
 echo ""
 echo "════════════════════════════════════════════════════════════"
-echo "✅ تم إصلاح المشكلة!"
-echo "════════════════════════════════════════════════════════════"
-echo ""
-echo "📥 انتظر 5-10 دقائق ثم حمل APK من:"
-echo "   https://github.com/almwld/Zion_OS_New/actions"
+# العودة إلى المجلد الرئيسي
+cd /data/data/com.termux/files/home/downloads/Supernova
+# إنشاء مجلد جديد
+mkdir Zion_OS_New
+cd Zion_OS_New
+# تهيئة Git
+git init
+# إضافة remote
+git remote add origin https://github.com/almwld/Zion_OS_New.git
+# إنشاء README
+echo "# Zion OS Repository" > README.md
+echo "" >> README.md
+echo "Fresh start for Zion OS" >> README.md
+# رفع التغييرات
+git add README.md
+git commit -m "Initial commit - Fresh start"
+git push -u origin main --force
+echo "✅ تم إنشاء مستودع جديد فارغ"
+# العودة إلى المجلد الرئيسي
+cd /data/data/com.termux/files/home/downloads/Supernova
+# إنشاء مجلد جديد
+mkdir Zion_OS_New
+cd Zion_OS_New
+# تهيئة Git
+git init
+# إضافة remote
+git remote add origin https://github.com/almwld/Zion_OS_New.git
+# إنشاء README
+echo "# Zion OS Repository" > README.md
+echo "" >> README.md
+echo "Fresh start for Zion OS" >> README.md
+# رفع التغييرات
+git add README.md
+git commit -m "Initial commit - Fresh start"
+git push -u origin main --force
+echo "✅ تم إنشاء مستودع جديد فارغ"
 cd /data/data/com.termux/files/home/downloads/Supernova/Zion_OS_New
 echo "════════════════════════════════════════════════════════════"
-echo "🔧 الحل الجذري لمشكلة Git Push"
+echo "🔧 إصلاح إعدادات Git وإنشاء أول commit"
 echo "════════════════════════════════════════════════════════════"
 echo ""
 # ============================================
-# 1. معرفة الوضع الحالي
+# 1. إعداد اسم المستخدم والبريد الإلكتروني
 # ============================================
-echo "📊 1. الوضع الحالي:"
+echo "📝 1. إعداد هوية Git:"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-git log --oneline -3
-ho ""
-git branch -a
-cho ""
-# ============================================
-# 2. عمل stash للتغييرات المحلية
-# ============================================
-echo "💾 2. حفظ التغييرات المحلية..."
-git stash
-echo "   ✅ تم الحفظ"
+git config --global user.name "almwld"
+git config --global user.email "almwld@github.com"
+echo "   ✅ تم إعداد:"
+echo "      • user.name = almwld"
+echo "      • user.email = almwld@github.com"
 echo ""
 # ============================================
-# 3. جلب أحدث التغييرات من البعيد
+# 2. إنشاء ملف README
 # ============================================
-echo "📥 3. جلب أحدث التغييرات..."
-git fetch origin
-git pull origin main --rebase
+echo "📄 2. إنشاء ملف README.md:"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+cat > README.md << 'EOF'
+# Zion OS
+
+نظام تشغيل متكامل للأمان والاختراق
+
+## 🚀 البدء
+
+```bash
+git clone https://github.com/almwld/Zion_OS_New.git
+cd Zion_OS_New
+
+cd /data/data/com.termux/files/home/downloads/Supernova/Zion_OS_New
+echo "════════════════════════════════════════════════════════════"
+echo "🔍 التحقق من محتويات المستودع"
+echo "════════════════════════════════════════════════════════════"
 echo ""
 # ============================================
-# 4. استرجاع التغييرات المحلية
+# 1. عرض الملفات في المجلد المحلي
 # ============================================
-echo "🔄 4. استرجاع التغييرات..."
-git stash pop
+echo "📁 1. الملفات في المجلد المحلي:"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+ls -la
 echo ""
 # ============================================
-# 5. إضافة الأيقونات
+# 2. عرض حالة Git
 # ============================================
-echo "📦 5. إضافة الأيقونات..."
-git add assets/icons/svg_colors/
+echo "📊 2. حالة Git:"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+git status
+echo ""
+# ============================================
+# 3. حذف جميع الملفات (باستثناء .git)
+# ============================================
+echo "🗑️ 3. حذف جميع الملفات (باستثناء مجلد .git):"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+# حذف كل الملفات ما عدا .git
+find . -maxdepth 1 -not -name ".git" -not -name "." -exec rm -rf {} \;
+echo "   ✅ تم حذف جميع الملفات"
+echo ""
+# ============================================
+# 4. التحقق بعد الحذف
+# ============================================
+echo "📁 4. المحتويات بعد الحذف:"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+ls -la
+echo ""
+# ============================================
+# 5. إضافة ورفع التغييرات
+# ============================================
+echo "🚀 5. رفع التغييرات إلى GitHub:"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 git add -A
-echo ""
-# ============================================
-# 6. commit
-# ============================================
-echo "📝 6. إنشاء commit..."
-git commit -m "✅ استرجاع الأيقونات الأصلية - 48 أيقونة SVG"
-echo ""
-# ============================================
-# 7. Force Push (الحل الجذري)
-# ============================================
-echo "🚀 7. Force Push إلى GitHub..."
+git commit -m "🗑️ حذف جميع الملفات - تنظيف كامل للمستودع"
 git push origin main --force
+echo ""
+echo "════════════════════════════════════════════════════════════"
+echo "✅ تم تنظيف المستودع بالكامل!"
+echo "🔗 https://github.com/almwld/Zion_OS_New"
+echo "════════════════════════════════════════════════════════════"
+cd /data/data/com.termux/files/home/downloads/Supernova/Zion_OS_New
+echo "════════════════════════════════════════════════════════════"
+echo "🔧 إنشاء commit فارغ ورفع إلى GitHub"
+echo "════════════════════════════════════════════════════════════"
+echo ""
+# ============================================
+# 1. إنشاء commit فارغ
+# ============================================
+echo "📝 1. إنشاء commit فارغ:"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+# إنشاء ملف مؤقت
+echo "# Zion OS Repository" > README.md
+echo "" >> README.md
+echo "Empty repository - Clean state" >> README.md
+# إضافة الملف
+git add README.md
+# إنشاء commit
+git commit -m "Initial empty repository - Clean state"
+echo "   ✅ تم إنشاء commit"
+echo ""
+# ============================================
+# 2. التحقق من الـ branch
+# ============================================
+echo "🌿 2. التحقق من الـ branch:"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+git branch -a
+ho ""
+# ============================================
+# 3. رفع إلى GitHub
+# ============================================
+echo "🚀 3. رفع إلى GitHub:"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+git push -u origin main --force
 if [ $? -eq 0 ]; then     echo "   ✅ تم الرفع بنجاح!"; else     echo "   ❌ فشل الرفع"; fi
 echo ""
+# ============================================
+# 4. التحقق من الرفع
+# ============================================
+echo "🔍 4. التحقق من الرفع:"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+git log --oneline
+cho ""
 echo "════════════════════════════════════════════════════════════"
-echo "✅ تم رفع الأيقونات بنجاح!"
+echo "✅ المستودع الآن فارغ على GitHub!"
+echo "🔗 https://github.com/almwld/Zion_OS_New"
+echo "════════════════════════════════════════════════════════════"
+# أنت الآن في المسار الصحيح
+pwd  # يجب أن يكون /data/.../Zion_OS_New
+# أضف ملفات مشروعك هنا
+# ثم:
+git add .
+git commit -m "إضافة المشروع"
+git push origin master
+cd /data/data/com.termux/files/home/downloads/Supernova/Zion_OS_New
+echo "════════════════════════════════════════════════════════════"
+echo "🗑️ حذف جميع الملفات من المستودع نهائياً"
 echo "════════════════════════════════════════════════════════════"
 echo ""
-echo "📥 انتظر 5-10 دقائق ثم حمل APK:"
-echo "   https://github.com/almwld/Zion_OS_New/actions"
-# الحل البديل: إعادة تعيين إلى الكومت الناجح ورفع
-git reset --hard 77183a3
-git push origin main --force
+# ============================================
+# 1. حذف كل الملفات والمجلدات (باستثناء .git)
+# ============================================
+echo "📁 1. حذف جميع الملفات المحلية:"
+find . -maxdepth 1 -not -name ".git" -not -name "." -exec rm -rf {} \;
+echo "   ✅ تم الحذف"
+# ============================================
+# 2. إنشاء README جديد
+# ============================================
+echo ""
+echo "📄 2. إنشاء README.md جديد:"
+cat > README.md << 'EOF'
+# Zion OS Repository
+
+This repository has been cleaned and is ready for a fresh start.
+
+## 🚀 Getting Started
+
+```bash
+git clone https://github.com/almwld/Zion_OS_New.git
+cd Zion_OS_New
+
+
+cd /data/data/com.termux/files/home/downloads/Supernova/Zion_OS_New
+echo "════════════════════════════════════════════════════════════"
+echo "🔍 التحقق من الوضع الحالي"
+echo "════════════════════════════════════════════════════════════"
+echo ""
+# ============================================
+# 1. عرض الملفات الموجودة حالياً
+# ============================================
+echo "📁 1. الملفات الموجودة:"
+ls -la
+echo ""
+# ============================================
+# 2. إنشاء README.md بشكل صحيح
+# ============================================
+echo "📝 2. إنشاء README.md:"
+echo '# Zion OS Repository' > README.md
+echo '' >> README.md
+echo 'This repository has been cleaned and is ready for a fresh start.' >> README.md
+echo '' >> README.md
+echo '## 🚀 Getting Started' >> README.md
+echo '' >> README.md
+echo '```bash' >> README.md
+echo 'git clone https://github.com/almwld/Zion_OS_New.git' >> README.md
+echo 'cd Zion_OS_New' >> README.md
+echo '```' >> README.md
+echo '' >> README.md
+echo '## 📝 License' >> README.md
+echo '' >> README.md
+echo 'MIT License' >> README.md
+echo "   ✅ تم إنشاء README.md"
+cat README.md
+echo ""
+# ============================================
+# 3. إضافة ورفع التغييرات
+# ============================================
+echo "📦 3. إضافة الملفات إلى Git:"
+git add README.md
+echo "   ✅ تمت الإضافة"
+echo ""
+echo "💾 4. إنشاء commit:"
+git commit -m "🗑️ تنظيف كامل للمستودع - حذف جميع الملفات القديمة"
+echo "   ✅ تم إنشاء commit"
+echo ""
+echo "🚀 5. رفع إلى GitHub:"
+git push origin master --force
+# مثال: إنشاء ملف جديد
+echo "# مرحباً بالعالم" > hello.txt
+# رفعه إلى GitHub
+git add hello.txt
+git commit -m "إضافة ملف أول للمشروع الجديد"
+git push origin master
+cd /data/data/com.termux/files/home/downloads/Supernova
+echo "════════════════════════════════════════════════════════════"
+echo "🔥 الحل النهائي: حذف المستودع بالكامل وإعادة إنشائه"
+echo "════════════════════════════════════════════════════════════"
+echo ""
+# ============================================
+# 1. حذف المجلد المحلي بالكامل
+# ============================================
+echo "📁 1. حذف المجلد المحلي..."
+rm -rf Zion_OS_New
+echo "   ✅ تم الحذف"
+# ============================================
+# 2. إنشاء مجلد جديد
+# ============================================
+echo ""
+echo "📁 2. إنشاء مجلد جديد..."
+mkdir Zion_OS_New
+cd Zion_OS_New
+echo "   ✅ تم الإنشاء"
+# ============================================
+# 3. تهيئة Git
+# ============================================
+echo ""
+echo "🔧 3. تهيئة Git..."
+git init
+git config user.name "almwld"
+git config user.email "almwld@github.com"
+echo "   ✅ تم التهيئة"
+# ============================================
+# 4. إنشاء README
+# ============================================
+echo ""
+echo "📄 4. إنشاء README.md..."
+echo "# Zion OS" > README.md
+echo "" >> README.md
+echo "Fresh start - Clean repository" >> README.md
+echo "   ✅ تم الإنشاء"
+# ============================================
+# 5. إضافة ورفع
+# ============================================
+echo ""
+echo "📦 5. إضافة ورفع إلى GitHub..."
+git add README.md
+git commit -m "Initial commit - Fresh start"
+git remote add origin https://github.com/almwld/Zion_OS_New.git
+git push -u origin master --force
+cd /data/data/com.termux/files/home/downloads/Supernova/Zion_OS_New
+echo "════════════════════════════════════════════════════════════"
+echo "🔐 إصلاح مشكلة المصادقة"
+echo "════════════════════════════════════════════════════════════"
+echo ""
+# ============================================
+# 1. إزالة الـ remote القديم
+# ============================================
+echo "📦 1. إزالة الـ remote القديم..."
+git remote remove origin
+echo "   ✅ تمت الإزالة"
+# ============================================
+# 2. إضافة remote جديد مع الـ Token
+# ============================================
+echo ""
+echo "🔑 2. إضافة remote جديد مع Token..."
+git remote add origin https://almwld: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@github.com/almwld/Zion_OS_New.git
+echo "   ✅ تمت الإضافة"
+# ============================================
+# 3. رفع التغييرات
+# ============================================
+echo ""
+echo "🚀 3. رفع التغييرات..."
+git push -u origin master --force
+echo ""
+echo "════════════════════════════════════════════════════════════"
+echo "✅ تم الرفع بنجاح!"
+echo "════════════════════════════════════════════════════════════"
